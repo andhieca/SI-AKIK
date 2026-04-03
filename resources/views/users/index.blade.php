@@ -98,7 +98,7 @@
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Jabatan</label>
                                 <input type="text" name="name" x-model="form.name" class="w-full rounded-lg border-gray-300 focus:border-bedas-500 focus:ring-bedas-200" required>
                             </div>
                             <div>

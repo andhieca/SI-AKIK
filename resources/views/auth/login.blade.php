@@ -91,7 +91,7 @@
         <div class="hidden lg:flex lg:w-3/5 relative flex-col justify-center p-16 xl:p-24 overflow-hidden">
             <!-- Background Image with Overlay -->
             <div class="absolute inset-0 z-0">
-                <img src="{{ asset('/../images/bg-login.png') }}" alt="Financial Background"
+                <img src="{{ asset('/../../images/bg-login.png') }}" alt="Financial Background"
                     class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-tr from-bedas-900/90 via-bedas-800/40 to-transparent"></div>
             </div>

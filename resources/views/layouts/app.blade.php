@@ -8,6 +8,13 @@
     <title>{{ config('app.name', 'SI-AKIK') }}</title>
     <link rel="icon" type="image/png" href="https://siakik.kecbandungkab.com/public/images/logo-kab-bandung.png">
     <!-- Tailwind CSS -->
+    <script>
+        const originalWarn = console.warn;
+        console.warn = (...args) => {
+            if (typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
+            originalWarn(...args);
+        };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {

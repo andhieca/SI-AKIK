@@ -15,6 +15,13 @@
         rel="stylesheet">
 
     <!-- Tailwind CSS -->
+    <script>
+        const originalWarn = console.warn;
+        console.warn = (...args) => {
+            if (typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
+            originalWarn(...args);
+        };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {

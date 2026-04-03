@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'SI-AKIK') }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/logo-kab-bandung.png') }}">
+    <link rel="icon" type="image/png" href="https://siakik.kecbandungkab.com/images/logo-kab-bandung.png">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -95,7 +95,7 @@
 
             <!-- Logo -->
             <div class="flex flex-col items-center justify-center py-8 bg-bedas-900 shadow-md">
-                <img src="{{ asset('images/logo-kab-bandung.png') }}" alt="Logo" class="w-16 h-auto mb-3">
+                <img src="https://siakik.kecbandungkab.com/images/logo-kab-bandung.png" alt="Logo" class="w-16 h-auto mb-3">
                 <h1 class="text-2xl font-bold tracking-wider">SI-AKIK<span class="text-bedas-400">.</span></h1>
             </div>
 
@@ -191,7 +191,7 @@
                         </svg>
                     </button>
                     <div class="flex items-center ml-4">
-                        <img src="{{ asset('images/logo-kab-bandung.png') }}" alt="Logo" class="w-8 h-auto mr-2">
+                        <img src="https://siakik.kecbandungkab.com/images/logo-kab-bandung.png" alt="Logo" class="w-8 h-auto mr-2">
                         <span class="text-xl font-bold text-gray-800">SI-AKIK</span>
                     </div>
                 </div>

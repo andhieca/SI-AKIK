@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>{{ config('app.name', 'SI-AKIK') }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/logo-kab-bandung.png') }}">
+    <link rel="icon" type="image/png" href="https://siakik.kecbandungkab.com/images/logo-kab-bandung.png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SI-AKIK</title>
-    <link rel="icon" type="image/png" href="https://siakik.kecbandungkab.com/images/logo-kab-bandung.png">
+    <link rel="icon" type="image/png" href="https://siakik.kecbandungkab.com/public/images/logo-kab-bandung.png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -91,7 +91,7 @@
         <div class="hidden lg:flex lg:w-3/5 relative flex-col justify-center p-16 xl:p-24 overflow-hidden">
             <!-- Background Image with Overlay -->
             <div class="absolute inset-0 z-0">
-                <img src="https://siakik.kecbandungkab.com/images/bg-login.png" alt="Financial Background"
+                <img src="https://siakik.kecbandungkab.com/public/images/bg-login.png" alt="Financial Background"
                     class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-tr from-bedas-900/90 via-bedas-800/40 to-transparent"></div>
             </div>
@@ -147,7 +147,7 @@
 
             <!-- Mobile Background (Only visible on small screens) -->
             <div class="lg:hidden absolute inset-0 z-0">
-                <img src="https://siakik.kecbandungkab.com/images/bg-login.png" alt="Financial Background"
+                <img src="https://siakik.kecbandungkab.com/public/images/bg-login.png" alt="Financial Background"
                     class="w-full h-full object-cover opacity-10">
                 <div class="absolute inset-0 bg-gradient-to-b from-white via-white/80 to-white"></div>
             </div>
@@ -162,7 +162,7 @@
                 <!-- Branding -->
                 <div class="text-center mb-10">
                     <div class="inline-block mb-6 transform transition-transform hover:scale-110">
-                        <img src="https://siakik.kecbandungkab.com/images/logo-kab-bandung.png" alt="Logo Kab Bandung"
+                        <img src="https://siakik.kecbandungkab.com/public/images/logo-kab-bandung.png" alt="Logo Kab Bandung"
                             class="w-32 h-auto drop-shadow-xl">
                     </div>
                     <h2 class="text-4xl font-outfit font-extrabold text-gray-900 tracking-tight">SI-AKIK</h2>

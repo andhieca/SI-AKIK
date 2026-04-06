@@ -98,7 +98,7 @@
         <div class="hidden lg:flex lg:w-3/5 relative flex-col justify-center p-16 xl:p-24 overflow-hidden">
             <!-- Background Image with Overlay -->
             <div class="absolute inset-0 z-0">
-                <img src="{{ asset('public/images/bg-login.png') }}" alt="Financial Background"
+                <img src="https://siakik.kecbandungkab.com/public/images/bg-login.png" alt="Financial Background"
                     class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-tr from-bedas-900/90 via-bedas-800/40 to-transparent"></div>
             </div>
@@ -168,17 +168,12 @@
             <div class="w-full max-w-sm relative z-10 animate-fade-in-up">
                 <!-- Branding -->
                 <div class="text-center mb-10">
-                    <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-6">
-                        <div class="transform transition-transform hover:scale-110">
-                            <img src="{{ asset('public/images/logo-kab-bandung.png') }}" alt="Logo Kab Bandung"
-                                class="w-24 h-auto drop-shadow-xl">
-                        </div>
-                        <div class="hidden md:block w-1 h-20 bg-gray-200 rounded-full"></div>
-                        <div class="transform transition-transform hover:scale-110">
-                            <img src="{{ asset('public/images/logo-si-akik.png') }}?v={{ time() }}" alt="Logo SI-AKIK"
-                                class="w-64 h-auto drop-shadow-xl">
-                        </div>
+                    <div class="inline-block mb-6 transform transition-transform hover:scale-110">
+                        <img src="https://siakik.kecbandungkab.com/public/images/logo-kab-bandung.png" alt="Logo Kab Bandung"
+                            class="w-32 h-auto drop-shadow-xl">
                     </div>
+                    <h2 class="text-4xl font-outfit font-extrabold text-gray-900 tracking-tight">SI-AKIK</h2>
+                    <p class="text-gray-500 mt-2 font-medium">Sistem Informasi Administrasi Kuitansi Keuangan</p>
                 </div>
 
                 <!-- Error Alert -->

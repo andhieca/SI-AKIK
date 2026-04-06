@@ -75,12 +75,24 @@
             }, 300);
         });
 
+        let showLoader = true;
+
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('a');
+            if (target && (target.hasAttribute('download') || target.target === '_blank' || target.classList.contains('no-loader') || target.href.match(/\b(download|template|export)\b/i))) {
+                showLoader = false;
+                setTimeout(() => { showLoader = true; }, 1000);
+            }
+        });
+
         window.addEventListener('beforeunload', function () {
-            const loader = document.getElementById('global-loader');
-            loader.style.display = 'flex';
-            setTimeout(() => {
-                loader.classList.remove('opacity-0');
-            }, 10);
+            if (showLoader) {
+                const loader = document.getElementById('global-loader');
+                loader.style.display = 'flex';
+                setTimeout(() => {
+                    loader.classList.remove('opacity-0');
+                }, 10);
+            }
         });
 
         // Handle Back/Forward Cache

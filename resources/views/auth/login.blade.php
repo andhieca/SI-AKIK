@@ -175,7 +175,7 @@
                         </div>
                         <div class="w-1 h-16 bg-gray-200 rounded-full"></div>
                         <div class="transform transition-transform hover:scale-110 pl-2">
-                            <img src="{{ asset('public/images/') }}" alt="Logo SI-AKIK"
+                            <img src="{{ asset('public/images/logo-si-akik.png') }}" alt="Logo SI-AKIK"
                                 class="w-28 h-auto drop-shadow-xl">
                         </div>
                     </div>

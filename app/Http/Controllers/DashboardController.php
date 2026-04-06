@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index(\Illuminate\Http\Request $request)
+    private function getDashboardData(\Illuminate\Http\Request $request)
     {
         $tahun = session('tahun_anggaran', date('Y'));
 
@@ -38,7 +38,6 @@ class DashboardController extends Controller
         $statsPerPptk = collect();
 
         if (auth()->user()->role === 'pptk') {
-            // Get verified/unverified transaction count for PPTK dashboard
             $pejabat_id = auth()->user()->pejabat_id;
             $validatedCount = clone $queryBku;
             $validatedCount = $validatedCount->where('status_validasi', true)->count();
@@ -51,7 +50,6 @@ class DashboardController extends Controller
 
             $validatedNominal = clone $queryBku;
             $validatedNominal = $validatedNominal->where('status_validasi', true)->sum('nominal');
-
         } else {
             $programs = \App\Models\Anggaran::where('tahun', $tahun)
                 ->whereNull('parent_id')
@@ -89,7 +87,6 @@ class DashboardController extends Controller
                 return $pptk->total_count > 0;
             })->sortByDesc('unvalidated_count')->values();
         }
-
 
         $realisasiPerJenis = \App\Models\BkuTransaksi::whereYear('tanggal', $tahun)
             ->select('jenis_pencairan', \DB::raw('SUM(nominal) as total'))
@@ -146,6 +143,16 @@ class DashboardController extends Controller
             'PPh Pasal 4 (Final)' => (clone $queryBku)->where('pph4_final', '>', 0)->get(['tanggal', 'no_bukti', 'uraian', 'pph4_final as nominal_pajak']),
         ];
 
-        return view('dashboard', compact('totalAnggaran', 'totalRealisasi', 'sisaKas', 'latestTransaksis', 'verificationResult', 'realisasiPerProgram', 'realisasiPerJenis', 'grafikKuitansi', 'validatedCount', 'unvalidatedCount', 'unvalidatedNominal', 'validatedNominal', 'statsPerPptk', 'rekapPajak', 'detailPajak'));
+        return compact('totalAnggaran', 'totalRealisasi', 'sisaKas', 'latestTransaksis', 'verificationResult', 'realisasiPerProgram', 'realisasiPerJenis', 'grafikKuitansi', 'validatedCount', 'unvalidatedCount', 'unvalidatedNominal', 'validatedNominal', 'statsPerPptk', 'rekapPajak', 'detailPajak');
+    }
+
+    public function index(\Illuminate\Http\Request $request)
+    {
+        return view('dashboard', $this->getDashboardData($request));
+    }
+
+    public function display(\Illuminate\Http\Request $request)
+    {
+        return view('display', $this->getDashboardData($request));
     }
 }

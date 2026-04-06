@@ -26,6 +26,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/display', [\App\Http\Controllers\DashboardController::class, 'display'])->name('display');
     Route::get('/debug', [DebugController::class, 'index'])->name('debug');
 
     // BKU Routes

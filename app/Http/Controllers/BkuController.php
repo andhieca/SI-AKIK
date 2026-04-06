@@ -257,6 +257,68 @@ class BkuController extends Controller
 
         return redirect()->route('bku.index')->with('success', 'Validasi transaksi berhasil dibatalkan.');
     }
+    public function cetak(Request $request)
+    {
+        $selectedJenisPencairan = $request->input('jenis_pencairan', 'all');
+        $selectedYear = $request->input('year', session('tahun_anggaran', date('Y')));
+
+        $query = \App\Models\BkuTransaksi::with('pptk')
+            ->whereYear('tanggal', $selectedYear);
+
+        if (auth()->user()->role === 'pptk') {
+            $query->where('pptk_id', auth()->user()->pejabat_id);
+        }
+
+        if ($selectedJenisPencairan !== 'all') {
+            $query->where('jenis_pencairan', $selectedJenisPencairan);
+        }
+
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('uraian', 'like', "%{$search}%")
+                    ->orWhere('no_bukti', 'like', "%{$search}%")
+                    ->orWhere('penerima', 'like', "%{$search}%")
+                    ->orWhereHas('pptk', function ($q) use ($search) {
+                        $q->where('nama', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $sortColumn = $request->input('sort', 'tanggal');
+        $sortDirection = $request->input('direction', 'desc');
+
+        $allowedSortColumns = ['tanggal', 'no_bukti', 'jenis_pencairan', 'uraian', 'nominal', 'status_validasi', 'pptk_id'];
+        if (!in_array($sortColumn, $allowedSortColumns)) {
+            $sortColumn = 'tanggal';
+        }
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+
+        if (!$request->has('sort')) {
+            $query->orderBy('status_validasi', 'asc')
+                ->orderBy('tanggal', 'asc');
+        } else {
+            if ($sortColumn === 'pptk_id') {
+                $query->join('pejabats', 'bku_transaksis.pptk_id', '=', 'pejabats.id')
+                    ->orderBy('pejabats.nama', $sortDirection)
+                    ->select('bku_transaksis.*');
+            } else {
+                $query->orderBy($sortColumn, $sortDirection);
+            }
+            if ($sortColumn !== 'tanggal') {
+                $query->orderBy('tanggal', 'asc');
+            }
+        }
+
+        $transaksis = $query->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('bku.cetak_pdf', compact('transaksis', 'selectedJenisPencairan', 'selectedYear'));
+        $pdf->setPaper('a4', 'landscape');
+
+        return $pdf->stream('BKU_' . $selectedJenisPencairan . '_' . $selectedYear . '.pdf');
+    }
+
     public function print(BkuTransaksi $bku)
     {
         $pptk = (object)[

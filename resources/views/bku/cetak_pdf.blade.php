@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 11px;
+            font-size: 9px;
         }
         .text-center { text-align: center; }
         .text-right { text-align: right; }
@@ -22,15 +22,16 @@
         }
         th, td {
             border: 1px solid #000;
-            padding: 5px;
+            padding: 4px;
             vertical-align: top;
+            word-wrap: break-word;
         }
         th {
             background-color: #f2f2f2;
             text-align: center;
         }
         .header-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             text-transform: uppercase;
         }
@@ -49,36 +50,51 @@
         <thead>
             <tr>
                 <th width="3%">No</th>
-                <th width="8%">Tanggal</th>
-                <th width="15%">No. Bukti</th>
-                <th width="10%">Pencairan</th>
-                <th width="34%">Uraian</th>
-                <th width="15%">PPTK</th>
-                <th width="15%">Nominal (Rp)</th>
+                <th width="6%">Tanggal</th>
+                <th width="8%">No. Bukti</th>
+                <th width="6%">Pencairan</th>
+                <th width="9%">Kode Rek. Belanja</th>
+                <th width="7%">Kode Sub Kegiatan</th>
+                <th width="12%">Nama Sub Kegiatan</th>
+                <th width="15%">Uraian</th>
+                <th width="10%">Penerima</th>
+                <th width="8%">PPTK</th>
+                <th width="8%">Pajak</th>
+                <th width="8%">Nominal (Rp)</th>
             </tr>
         </thead>
         <tbody>
-            @php $total = 0; @endphp
+            @php $total = 0; $totalPajak = 0; @endphp
             @forelse($transaksis as $index => $t)
-                @php $total += $t->nominal; @endphp
+                @php 
+                    $total += $t->nominal; 
+                    $pajak = $t->pph21 + $t->pph22 + $t->pph23 + $t->ppn + $t->pajak_daerah + $t->pph4_final;
+                    $totalPajak += $pajak;
+                @endphp
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
                     <td class="text-center">{{ \Carbon\Carbon::parse($t->tanggal)->format('d/m/Y') }}</td>
                     <td>{{ $t->no_bukti }}</td>
                     <td class="text-center">{{ $t->jenis_pencairan }}</td>
-                    <td>{{ $t->uraian }}<br><small><i>Penerima: {{ $t->penerima }}</i></small></td>
+                    <td>{{ $t->kode_rekening }}</td>
+                    <td>{{ $t->kode_sub_kegiatan }}</td>
+                    <td>{{ $t->nama_sub_kegiatan }}</td>
+                    <td>{{ $t->uraian }}</td>
+                    <td>{{ $t->penerima }}</td>
                     <td>{{ $t->nama_pptk ?? ($t->pptk ? $t->pptk->nama : '-') }}</td>
+                    <td class="text-right">{{ number_format($pajak, 2, ',', '.') }}</td>
                     <td class="text-right">{{ number_format($t->nominal, 2, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center">Tidak ada data transaksi.</td>
+                    <td colspan="12" class="text-center">Tidak ada data transaksi.</td>
                 </tr>
             @endforelse
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="6" class="text-right font-bold">TOTAL</th>
+                <th colspan="10" class="text-right font-bold">TOTAL</th>
+                <th class="text-right font-bold">{{ number_format($totalPajak, 2, ',', '.') }}</th>
                 <th class="text-right font-bold">{{ number_format($total, 2, ',', '.') }}</th>
             </tr>
         </tfoot>

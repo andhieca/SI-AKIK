@@ -113,7 +113,7 @@
 
     <!-- Main Container -->
     <div class="h-full w-full flex flex-col relative bg-cover bg-center bg-no-repeat"
-        style="background-image: url('{{ asset('images/bg-monitoring.jpg') }}');">
+        style="background-image: url('{{ asset('/.../images/bg-monitoring.jpg') }}');">
 
         <!-- Overlay backdrop -->
         <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-[2px]"></div>

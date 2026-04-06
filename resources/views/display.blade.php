@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Display Monitoring SI-AKIK</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/logo-kab-bandung.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('public/images/logo-kab-bandung.png') }}">
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
@@ -113,7 +113,7 @@
 
     <!-- Main Container -->
     <div class="h-full w-full flex flex-col relative bg-cover bg-center bg-no-repeat"
-        style="background-image: url('{{ asset('/.../images/bg-monitoring.jpg') }}');">
+        style="background-image: url('{{ asset('public/images/bg-monitoring.jpg') }}');">
 
         <!-- Overlay backdrop -->
         <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-[2px]"></div>
@@ -122,7 +122,7 @@
         <header
             class="relative z-10 glass-panel border-b border-white/20 p-4 shrink-0 flex justify-between items-center bg-white/80">
             <div class="flex items-center gap-4">
-                <img src="{{ asset('images/logo-kab-bandung.png') }}"
+                <img src="{{ asset('public/images/logo-kab-bandung.png') }}"
                     onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Lambang_Kabupaten_Bandung%2C_Jawa_Barat%2C_Indonesia.svg/1200px-Lambang_Kabupaten_Bandung%2C_Jawa_Barat%2C_Indonesia.svg.png'"
                     alt="Logo" class="h-16 w-auto drop-shadow-md">
                 <div>

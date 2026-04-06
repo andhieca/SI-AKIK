@@ -170,8 +170,8 @@
                 <div class="text-center mb-10">
                     <div class="flex justify-center items-center gap-6 mb-6">
                         <div class="transform transition-transform hover:scale-110">
-                            <img src="https://siakik.kecbandungkab.com/public/images/logo-kab-bandung.png" alt="Logo Kab Bandung"
-                                class="w-24 h-auto drop-shadow-xl">
+                            <img src="https://siakik.kecbandungkab.com/public/images/logo-kab-bandung.png"
+                                alt="Logo Kab Bandung" class="w-24 h-auto drop-shadow-xl">
                         </div>
                         <div class="w-1 h-16 bg-gray-200 rounded-full"></div>
                         <div class="transform transition-transform hover:scale-110 pl-2">

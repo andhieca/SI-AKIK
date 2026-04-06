@@ -168,19 +168,17 @@
             <div class="w-full max-w-sm relative z-10 animate-fade-in-up">
                 <!-- Branding -->
                 <div class="text-center mb-10">
-                    <div class="flex justify-center items-center gap-6 mb-6">
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-6">
                         <div class="transform transition-transform hover:scale-110">
                             <img src="{{ asset('public/images/logo-kab-bandung.png') }}" alt="Logo Kab Bandung"
                                 class="w-24 h-auto drop-shadow-xl">
                         </div>
-                        <div class="w-1 h-16 bg-gray-200 rounded-full"></div>
-                        <div class="transform transition-transform hover:scale-110 pl-2">
-                            <img src="{{ asset('public/images/logo-si-akik.png') }}" alt="Logo SI-AKIK"
-                                class="w-28 h-auto drop-shadow-xl">
+                        <div class="hidden md:block w-1 h-20 bg-gray-200 rounded-full"></div>
+                        <div class="transform transition-transform hover:scale-110">
+                            <img src="{{ asset('public/images/logo-si-akik.png') }}?v={{ time() }}" alt="Logo SI-AKIK"
+                                class="w-64 h-auto drop-shadow-xl">
                         </div>
                     </div>
-                    <h2 class="text-4xl font-outfit font-extrabold text-gray-900 tracking-tight">SI-AKIK</h2>
-                    <p class="text-gray-500 mt-2 font-medium">Sistem Informasi Administrasi Kuitansi Keuangan</p>
                 </div>
 
                 <!-- Error Alert -->

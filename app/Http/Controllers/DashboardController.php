@@ -153,6 +153,9 @@ class DashboardController extends Controller
 
     public function display(\Illuminate\Http\Request $request)
     {
+        if (auth()->user()->role !== 'camat') {
+            abort(403, 'Akses ditolak. Fitur ini hanya untuk Camat.');
+        }
         return view('display', $this->getDashboardData($request));
     }
 }

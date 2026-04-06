@@ -152,7 +152,7 @@
                     </a>
                 @endif
                 
-                @if(auth()->user()->role === 'camat' || auth()->user()->role === 'admin')
+                @if(auth()->user()->role === 'camat')
                     <a href="{{ route('display') }}"
                         class="flex items-center px-4 py-3 rounded-lg transition-colors duration-200 {{ request()->routeIs('display') ? 'bg-bedas-700 text-white shadow-lg' : 'text-bedas-100 hover:bg-bedas-700 hover:text-white' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

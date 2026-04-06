@@ -98,7 +98,7 @@
         <div class="hidden lg:flex lg:w-3/5 relative flex-col justify-center p-16 xl:p-24 overflow-hidden">
             <!-- Background Image with Overlay -->
             <div class="absolute inset-0 z-0">
-                <img src="https://siakik.kecbandungkab.com/public/images/bg-login.png" alt="Financial Background"
+                <img src="{{ asset('public/images/bg-login.png') }}" alt="Financial Background"
                     class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-tr from-bedas-900/90 via-bedas-800/40 to-transparent"></div>
             </div>
@@ -170,8 +170,8 @@
                 <div class="text-center mb-10">
                     <div class="flex justify-center items-center gap-6 mb-6">
                         <div class="transform transition-transform hover:scale-110">
-                            <img src="https://siakik.kecbandungkab.com/public/images/logo-kab-bandung.png"
-                                alt="Logo Kab Bandung" class="w-24 h-auto drop-shadow-xl">
+                            <img src="{{ asset('public/images/logo-kab-bandung.png') }}" alt="Logo Kab Bandung"
+                                class="w-24 h-auto drop-shadow-xl">
                         </div>
                         <div class="w-1 h-16 bg-gray-200 rounded-full"></div>
                         <div class="transform transition-transform hover:scale-110 pl-2">

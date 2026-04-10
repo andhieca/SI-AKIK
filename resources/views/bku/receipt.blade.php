@@ -181,7 +181,7 @@
 
         <table class="info-table">
             <tr>
-                <td width="150">Tahun Anggaran</td>
+                <td width="120">Tahun Anggaran</td>
                 <td width="10">:</td>
                 <td>{{ \Carbon\Carbon::parse($bku->tanggal)->year }}</td>
             </tr>
@@ -214,7 +214,7 @@
         <div class="main-table">
             <table>
                 <tr>
-                    <td width="150">Terima dari</td>
+                    <td width="120">Terima dari</td>
                     <td width="10">:</td>
                     <td>Bendahara Kecamatan Pasirjambu</td>
                 </tr>
@@ -248,14 +248,14 @@
             <table class="calculation-table">
                 <!-- Gross Amount -->
                 <tr>
-                    <td width="150">Keterangan</td>
+                    <td width="120">Keterangan</td>
                     <td width="10">:</td>
-                    <td width="200">Jumlah Kotor</td>
-                    <td width="30"></td> <!-- Indent Currency -->
-                    <td width="100"></td> <!-- Indent Amount -->
-                    <td width="30" style="text-align: right;">Rp</td>
-                    <td width="100" style="text-align: right;">{{ number_format($bku->nominal, 0, ',', '.') }}</td>
-                    <td></td> <!-- Spacer -->
+                    <td width="150">Jumlah Kotor</td>
+                    <td width="20"></td>
+                    <td width="80"></td>
+                    <td width="25" style="text-align: right;">Rp</td>
+                    <td width="90" style="text-align: right;">{{ number_format($bku->nominal, 0, ',', '.') }}</td>
+                    <td></td>
                 </tr>
 
                 <!-- Individual Taxes -->
@@ -270,7 +270,7 @@
                             <td style="text-align: right;">{{ number_format($amount, 0, ',', '.') }}</td>
                             <td></td>
                             <td></td>
-                            <td></td> <!-- Spacer -->
+                            <td></td>
                         </tr>
                     @endif
                 @endforeach
@@ -282,12 +282,12 @@
                         <td></td>
                         <td>Total Potongan Pajak</td>
                         <td></td>
-                        <td style="text-align: right;">-</td> <!-- Minus sign -->
+                        <td style="text-align: right;">-</td>
                         <td style="text-align: right;">Rp</td>
                         <td style="text-align: right; border-bottom: 1px solid #000;">
                             {{ number_format($totalPajak, 0, ',', '.') }}
                         </td>
-                        <td></td> <!-- Spacer -->
+                        <td></td>
                     </tr>
                 @else
                     <!-- Spacer if no tax -->
@@ -307,7 +307,7 @@
                     <td style="text-align: right; font-weight: bold;">
                         {{ number_format($bku->nominal - $totalPajak, 0, ',', '.') }}
                     </td>
-                    <td></td> <!-- Spacer -->
+                    <td></td>
                 </tr>
             </table>
         </div>

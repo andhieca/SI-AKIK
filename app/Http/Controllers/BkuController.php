@@ -385,7 +385,7 @@ class BkuController extends Controller
         }
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('bku.receipt', compact('bku', 'pptk', 'camat', 'bendahara', 'terbilang', 'qrCodeDataUri'));
-        $pdf->setPaper('f4', 'landscape');
+        $pdf->setPaper('f4', 'portrait');
 
         $filename = 'Kwitansi_' . str_replace(['/', '\\'], '_', $bku->no_bukti) . '.pdf';
         return $pdf->stream($filename);

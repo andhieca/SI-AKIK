@@ -5,13 +5,13 @@
     <title>Kwitansi</title>
     <style>
         @page {
-            size: 21.5cm 33cm landscape;
+            size: 21.5cm 33cm portrait;
             margin: 1cm;
         }
 
         body {
             font-family: Arial, sans-serif;
-            font-size: 11pt;
+            font-size: 10pt;
         }
 
         .container {
@@ -32,14 +32,14 @@
         .header h3 {
             margin: 0;
             font-weight: bold;
-            font-size: 12pt;
+            font-size: 11pt;
             text-transform: uppercase;
         }
 
         .header h4 {
             margin: 2px 0;
             font-weight: bold;
-            font-size: 11pt;
+            font-size: 10pt;
             text-transform: uppercase;
         }
 
@@ -87,7 +87,7 @@
 
         .signatures {
             width: 100%;
-            margin-top: 20px;
+            margin-top: 15px;
             border-collapse: collapse;
             border: 1px solid #000;
         }
@@ -98,13 +98,15 @@
             vertical-align: top;
             padding: 5px;
             width: 25%;
-            height: 120px;
+            height: 100px;
             position: relative;
+            font-size: 9pt;
         }
 
         .signature-title {
-            margin-bottom: 60px;
+            margin-bottom: 40px;
             font-weight: bold;
+            font-size: 9pt;
         }
 
         .signature-name {
@@ -125,11 +127,11 @@
         }
 
         .qr-section {
-            margin-top: 15px;
+            margin-top: 10px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 8px 12px;
+            gap: 10px;
+            padding: 6px 10px;
             border: 1px dashed #999;
             border-radius: 4px;
             background: #fafafa;

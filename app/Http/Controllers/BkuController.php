@@ -537,6 +537,66 @@ class BkuController extends Controller
         return view('bku.verify', compact('bku'));
     }
 
+    public function cetakPajak(Request $request)
+    {
+        $selectedYear = $request->input('year', session('tahun_anggaran', date('Y')));
+        $selectedMonth = $request->input('bulan', 'all');
+        $selectedJenisPencairan = $request->input('jenis_pencairan', 'all');
+
+        $query = BkuTransaksi::with('pptk')
+            ->whereYear('tanggal', $selectedYear)
+            ->where(function ($q) {
+                $q->where('pph21', '>', 0)
+                    ->orWhere('pph22', '>', 0)
+                    ->orWhere('pph23', '>', 0)
+                    ->orWhere('pph4_final', '>', 0)
+                    ->orWhere('ppn', '>', 0)
+                    ->orWhere('pajak_daerah', '>', 0);
+            });
+
+        if ($selectedMonth !== 'all') {
+            $query->whereMonth('tanggal', $selectedMonth);
+        }
+
+        if ($selectedJenisPencairan !== 'all') {
+            $query->where('jenis_pencairan', $selectedJenisPencairan);
+        }
+
+        if (auth()->user()->role === 'pptk') {
+            $query->where('pptk_id', auth()->user()->pejabat_id);
+        }
+
+        $transaksis = $query->orderBy('tanggal', 'asc')->get();
+
+        // Calculate totals per tax type
+        $totalPajak = [
+            'pph21' => $transaksis->sum('pph21'),
+            'pph22' => $transaksis->sum('pph22'),
+            'pph23' => $transaksis->sum('pph23'),
+            'pph4_final' => $transaksis->sum('pph4_final'),
+            'ppn' => $transaksis->sum('ppn'),
+            'pajak_daerah' => $transaksis->sum('pajak_daerah'),
+        ];
+        $grandTotalPajak = array_sum($totalPajak);
+
+        $bulanNama = [
+            '1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April',
+            '5' => 'Mei', '6' => 'Juni', '7' => 'Juli', '8' => 'Agustus',
+            '9' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember',
+        ];
+        $filterBulan = $selectedMonth !== 'all' ? ($bulanNama[$selectedMonth] ?? $selectedMonth) : 'Semua Bulan';
+        $filterPencairan = $selectedJenisPencairan !== 'all' ? $selectedJenisPencairan : 'Semua Jenis';
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('bku.cetak_pajak_pdf', compact(
+            'transaksis', 'selectedYear', 'filterBulan', 'filterPencairan',
+            'totalPajak', 'grandTotalPajak'
+        ));
+        $pdf->setPaper('a4', 'landscape');
+
+        $filename = 'Laporan_Pajak_' . $selectedYear . '_' . $filterBulan . '.pdf';
+        return $pdf->stream($filename);
+    }
+
     public function downloadTemplate()
     {
         $data = [

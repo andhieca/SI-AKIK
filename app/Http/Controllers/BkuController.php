@@ -343,14 +343,48 @@ class BkuController extends Controller
 
         $terbilang = $this->terbilang($bku->nominal) . ' Rupiah';
 
-        // Generate QR Code SVG for the receipt
-        $qrCodeSvg = null;
+        // Generate QR Code as base64 PNG image for DomPDF compatibility
+        $qrCodeDataUri = null;
         if ($bku->qr_code_hash) {
             $verifyUrl = url('/bku/verify/' . $bku->qr_code_hash);
-            $qrCodeSvg = \SimpleSoftwareIO\QrCode\Facades\QrCode::size(80)->margin(0)->generate($verifyUrl);
+
+            // Use BaconQrCode Encoder to get QR matrix, then render to PNG via GD
+            $encoder = \BaconQrCode\Encoder\Encoder::encode(
+                $verifyUrl,
+                \BaconQrCode\Common\ErrorCorrectionLevel::L()
+            );
+            $matrix = $encoder->getMatrix();
+            $matrixWidth = $matrix->getWidth();
+            $matrixHeight = $matrix->getHeight();
+
+            $moduleSize = 10;
+            $marginModules = 2;
+            $imgSize = ($matrixWidth + $marginModules * 2) * $moduleSize;
+
+            $img = imagecreatetruecolor($imgSize, $imgSize);
+            $white = imagecolorallocate($img, 255, 255, 255);
+            $black = imagecolorallocate($img, 0, 0, 0);
+            imagefill($img, 0, 0, $white);
+
+            for ($y = 0; $y < $matrixHeight; $y++) {
+                for ($x = 0; $x < $matrixWidth; $x++) {
+                    if ($matrix->get($x, $y) === 1) {
+                        $px = ($x + $marginModules) * $moduleSize;
+                        $py = ($y + $marginModules) * $moduleSize;
+                        imagefilledrectangle($img, $px, $py, $px + $moduleSize - 1, $py + $moduleSize - 1, $black);
+                    }
+                }
+            }
+
+            ob_start();
+            imagepng($img);
+            $pngData = ob_get_clean();
+            imagedestroy($img);
+
+            $qrCodeDataUri = 'data:image/png;base64,' . base64_encode($pngData);
         }
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('bku.receipt', compact('bku', 'pptk', 'camat', 'bendahara', 'terbilang', 'qrCodeSvg'));
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('bku.receipt', compact('bku', 'pptk', 'camat', 'bendahara', 'terbilang', 'qrCodeDataUri'));
         $pdf->setPaper('f4', 'landscape');
 
         $filename = 'Kwitansi_' . str_replace(['/', '\\'], '_', $bku->no_bukti) . '.pdf';

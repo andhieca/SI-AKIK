@@ -349,10 +349,10 @@
             </tr>
         </table>
 
-        @if(isset($qrCodeSvg) && $qrCodeSvg)
+        @if(isset($qrCodeDataUri) && $qrCodeDataUri)
         <div class="qr-section">
             <div class="qr-image">
-                {!! $qrCodeSvg !!}
+                <img src="{{ $qrCodeDataUri }}" width="100" height="100" style="display: block;">
             </div>
             <div class="qr-info">
                 <div class="qr-title">Scan QR untuk Verifikasi & Tracking</div>

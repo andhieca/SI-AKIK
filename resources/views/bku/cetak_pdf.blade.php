@@ -82,7 +82,26 @@
                     <td>{{ $t->uraian }}</td>
                     <td>{{ $t->penerima }}</td>
                     <td>{{ $t->nama_pptk ?? ($t->pptk ? $t->pptk->nama : '-') }}</td>
-                    <td class="text-right">{{ number_format($pajak, 2, ',', '.') }}</td>
+                    <td style="font-size: 8px;">
+                        @php
+                            $pajakItems = [
+                                'PPh 21' => $t->pph21,
+                                'PPh 22' => $t->pph22,
+                                'PPh 23' => $t->pph23,
+                                'PPh 4(2)' => $t->pph4_final,
+                                'PPN' => $t->ppn,
+                                'Pjk Daerah' => $t->pajak_daerah,
+                            ];
+                        @endphp
+                        @foreach($pajakItems as $pajakLabel => $pajakNominal)
+                            @if($pajakNominal > 0)
+                                {{ $pajakLabel }}: {{ number_format($pajakNominal, 0, ',', '.') }}<br>
+                            @endif
+                        @endforeach
+                        @if($pajak == 0)
+                            -
+                        @endif
+                    </td>
                     <td class="text-right">{{ number_format($t->nominal, 2, ',', '.') }}</td>
                 </tr>
             @empty

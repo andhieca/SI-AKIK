@@ -343,7 +343,14 @@ class BkuController extends Controller
 
         $terbilang = $this->terbilang($bku->nominal) . ' Rupiah';
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('bku.receipt', compact('bku', 'pptk', 'camat', 'bendahara', 'terbilang'));
+        // Generate QR Code SVG for the receipt
+        $qrCodeSvg = null;
+        if ($bku->qr_code_hash) {
+            $verifyUrl = url('/bku/verify/' . $bku->qr_code_hash);
+            $qrCodeSvg = \SimpleSoftwareIO\QrCode\Facades\QrCode::size(80)->margin(0)->generate($verifyUrl);
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('bku.receipt', compact('bku', 'pptk', 'camat', 'bendahara', 'terbilang', 'qrCodeSvg'));
         $pdf->setPaper('f4', 'landscape');
 
         $filename = 'Kwitansi_' . str_replace(['/', '\\'], '_', $bku->no_bukti) . '.pdf';
@@ -488,6 +495,12 @@ class BkuController extends Controller
             $temp = $this->terbilang($nilai / 1000000000000) . ' Trilyun' . $this->terbilang($nilai % 1000000000000);
         }
         return $temp;
+    }
+
+    public function verify($hash)
+    {
+        $bku = \App\Models\BkuTransaksi::with('pptk')->where('qr_code_hash', $hash)->first();
+        return view('bku.verify', compact('bku'));
     }
 
     public function downloadTemplate()

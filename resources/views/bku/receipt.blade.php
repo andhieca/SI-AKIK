@@ -124,8 +124,46 @@
             right: 0;
         }
 
-        .qr-placeholder {
-            /* Placeholder for QR if needed in specific location */
+        .qr-section {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 8px 12px;
+            border: 1px dashed #999;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+
+        .qr-section .qr-image {
+            flex-shrink: 0;
+        }
+
+        .qr-section .qr-info {
+            font-size: 8pt;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .qr-section .qr-info .qr-title {
+            font-weight: bold;
+            font-size: 9pt;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .qr-section .qr-info .qr-hash {
+            font-family: monospace;
+            font-size: 7pt;
+            color: #888;
+            word-break: break-all;
+        }
+
+        @media print {
+            .qr-section {
+                border-color: #ccc;
+                background: #fff;
+            }
         }
     </style>
 </head>
@@ -310,6 +348,21 @@
                 </td>
             </tr>
         </table>
+
+        @if(isset($qrCodeSvg) && $qrCodeSvg)
+        <div class="qr-section">
+            <div class="qr-image">
+                {!! $qrCodeSvg !!}
+            </div>
+            <div class="qr-info">
+                <div class="qr-title">Scan QR untuk Verifikasi & Tracking</div>
+                <div>No. Bukti: {{ $bku->no_bukti }}</div>
+                <div>Nominal: Rp {{ number_format($bku->nominal, 0, ',', '.') }}</div>
+                <div>Tanggal: {{ \Carbon\Carbon::parse($bku->tanggal)->isoFormat('D MMMM Y') }}</div>
+                <div class="qr-hash">ID: {{ $bku->qr_code_hash }}</div>
+            </div>
+        </div>
+        @endif
     </div>
 </body>
 

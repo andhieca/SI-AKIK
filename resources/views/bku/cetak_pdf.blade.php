@@ -71,39 +71,39 @@
                     $pajak = $t->pph21 + $t->pph22 + $t->pph23 + $t->ppn + $t->pajak_daerah + $t->pph4_final;
                     $totalPajak += $pajak;
                 @endphp
+                @php
+                    $pajakItems = [
+                        'PPh 21' => $t->pph21,
+                        'PPh 22' => $t->pph22,
+                        'PPh 23' => $t->pph23,
+                        'PPh Pasal 4 (Final)' => $t->pph4_final,
+                        'PPN' => $t->ppn,
+                        'Pajak Daerah' => $t->pajak_daerah,
+                    ];
+                    $activePajak = array_filter($pajakItems, fn($v) => $v > 0);
+                    $pajakCount = count($activePajak);
+                @endphp
                 <tr>
-                    <td class="text-center">{{ $index + 1 }}</td>
-                    <td class="text-center">{{ \Carbon\Carbon::parse($t->tanggal)->format('d/m/Y') }}</td>
-                    <td>{{ $t->no_bukti }}</td>
-                    <td class="text-center">{{ $t->jenis_pencairan }}</td>
-                    <td>{{ $t->kode_rekening }}</td>
-                    <td>{{ $t->kode_sub_kegiatan }}</td>
-                    <td>{{ $t->nama_sub_kegiatan }}</td>
+                    <td class="text-center" @if($pajakCount > 0) rowspan="{{ $pajakCount + 1 }}" @endif>{{ $index + 1 }}</td>
+                    <td class="text-center" @if($pajakCount > 0) rowspan="{{ $pajakCount + 1 }}" @endif>{{ \Carbon\Carbon::parse($t->tanggal)->format('d/m/Y') }}</td>
+                    <td @if($pajakCount > 0) rowspan="{{ $pajakCount + 1 }}" @endif>{{ $t->no_bukti }}</td>
+                    <td class="text-center" @if($pajakCount > 0) rowspan="{{ $pajakCount + 1 }}" @endif>{{ $t->jenis_pencairan }}</td>
+                    <td @if($pajakCount > 0) rowspan="{{ $pajakCount + 1 }}" @endif>{{ $t->kode_rekening }}</td>
+                    <td @if($pajakCount > 0) rowspan="{{ $pajakCount + 1 }}" @endif>{{ $t->kode_sub_kegiatan }}</td>
+                    <td @if($pajakCount > 0) rowspan="{{ $pajakCount + 1 }}" @endif>{{ $t->nama_sub_kegiatan }}</td>
                     <td>{{ $t->uraian }}</td>
-                    <td>{{ $t->penerima }}</td>
-                    <td>{{ $t->nama_pptk ?? ($t->pptk ? $t->pptk->nama : '-') }}</td>
-                    <td style="font-size: 8px;">
-                        @php
-                            $pajakItems = [
-                                'PPh 21' => $t->pph21,
-                                'PPh 22' => $t->pph22,
-                                'PPh 23' => $t->pph23,
-                                'PPh 4(2)' => $t->pph4_final,
-                                'PPN' => $t->ppn,
-                                'Pjk Daerah' => $t->pajak_daerah,
-                            ];
-                        @endphp
-                        @foreach($pajakItems as $pajakLabel => $pajakNominal)
-                            @if($pajakNominal > 0)
-                                {{ $pajakLabel }}: {{ number_format($pajakNominal, 0, ',', '.') }}<br>
-                            @endif
-                        @endforeach
-                        @if($pajak == 0)
-                            -
-                        @endif
-                    </td>
+                    <td @if($pajakCount > 0) rowspan="{{ $pajakCount + 1 }}" @endif>{{ $t->penerima }}</td>
+                    <td @if($pajakCount > 0) rowspan="{{ $pajakCount + 1 }}" @endif>{{ $t->nama_pptk ?? ($t->pptk ? $t->pptk->nama : '-') }}</td>
+                    <td class="text-center">-</td>
                     <td class="text-right">{{ number_format($t->nominal, 2, ',', '.') }}</td>
                 </tr>
+                @foreach($activePajak as $pajakLabel => $pajakNominal)
+                    <tr>
+                        <td style="font-style: italic; font-size: 8px; padding-left: 8px;">↳ Potongan {{ $pajakLabel }}</td>
+                        <td class="text-right">{{ number_format($pajakNominal, 2, ',', '.') }}</td>
+                        <td></td>
+                    </tr>
+                @endforeach
             @empty
                 <tr>
                     <td colspan="12" class="text-center">Tidak ada data transaksi.</td>

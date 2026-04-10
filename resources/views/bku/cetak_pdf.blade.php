@@ -99,7 +99,7 @@
                 </tr>
                 @foreach($activePajak as $pajakLabel => $pajakNominal)
                     <tr>
-                        <td style="font-style: italic; font-size: 8px; padding-left: 8px;">↳ Potongan {{ $pajakLabel }}</td>
+                        <td style="font-style: italic; font-size: 8px; padding-left: 8px;">Potongan {{ $pajakLabel }}</td>
                         <td class="text-right">{{ number_format($pajakNominal, 2, ',', '.') }}</td>
                         <td></td>
                     </tr>

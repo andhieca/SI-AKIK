@@ -598,6 +598,11 @@ class BkuController extends Controller
         return $pdf->stream($filename);
     }
 
+    public function scanner()
+    {
+        return view('bku.scanner');
+    }
+
     public function downloadTemplate()
     {
         $data = [

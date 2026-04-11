@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/bku/verify/{hash}', [BkuController::class, 'verify'])->name('bku.verify');
     Route::get('/bku/cetak', [BkuController::class, 'cetak'])->name('bku.cetak');
     Route::get('/bku/cetak-pajak', [BkuController::class, 'cetakPajak'])->name('bku.cetak_pajak');
+    Route::get('/bku/scanner', [BkuController::class, 'scanner'])->name('bku.scanner');
     Route::get('/bku/download-template', [BkuController::class, 'downloadTemplate'])->name('bku.template');
     Route::post('/bku/import', [BkuController::class, 'import'])->name('bku.import');
     Route::get('/bku/generate-no-bukti', [BkuController::class, 'generateNoBukti'])->name('bku.generate_no_bukti');

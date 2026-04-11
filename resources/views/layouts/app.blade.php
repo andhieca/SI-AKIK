@@ -211,7 +211,7 @@
         <!-- Main Content Wrapper -->
         <div class="flex-1 flex flex-col overflow-hidden relative">
             <!-- Mobile Header -->
-            <header class="flex items-center justify-between px-6 py-4 bg-white border-b lg:hidden">
+            <header class="flex items-center justify-between px-6 py-4 bg-white border-b lg:hidden z-10 relative">
                 <div class="flex items-center">
                     <button @click="sidebarOpen = true" class="text-gray-600 focus:outline-none">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -224,6 +224,15 @@
                         <span class="text-xl font-bold text-gray-800">SI-AKIK</span>
                     </div>
                 </div>
+                
+                <!-- Scanner QR Icon for Mobile -->
+                <a href="{{ route('bku.scanner') }}"
+                    class="text-gray-500 hover:text-bedas-600 transition p-2 rounded-full hover:bg-gray-100 flex-shrink-0 ml-auto"
+                    title="Scan QR Code Kwitansi">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                    </svg>
+                </a>
             </header>
 
             <!-- Overlay for mobile sidebar -->

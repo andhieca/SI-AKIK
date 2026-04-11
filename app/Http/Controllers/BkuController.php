@@ -586,10 +586,11 @@ class BkuController extends Controller
         ];
         $filterBulan = $selectedMonth !== 'all' ? ($bulanNama[$selectedMonth] ?? $selectedMonth) : 'Semua Bulan';
         $filterPencairan = $selectedJenisPencairan !== 'all' ? $selectedJenisPencairan : 'Semua Jenis';
+        $tanggalCetak = $request->input('tanggal_cetak', date('Y-m-d'));
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('bku.cetak_pajak_pdf', compact(
             'transaksis', 'selectedYear', 'filterBulan', 'filterPencairan',
-            'totalPajak', 'grandTotalPajak'
+            'totalPajak', 'grandTotalPajak', 'tanggalCetak'
         ));
         $pdf->setPaper('a4', 'landscape');
 

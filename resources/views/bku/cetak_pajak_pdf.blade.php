@@ -158,7 +158,7 @@
             <td style="border: none; width: 34%; text-align: center;">
             </td>
             <td style="border: none; width: 33%; text-align: center;">
-                Pasirjambu, {{ date('d F Y') }}<br>
+                Pasirjambu, {{ \Carbon\Carbon::parse($tanggalCetak)->translatedFormat('d F Y') }}<br>
                 Bendahara Pengeluaran<br>
                 <br><br><br><br>
                 <b><u>{{ $transaksis->first()->nama_bendahara ?? '............................' }}</u></b><br>

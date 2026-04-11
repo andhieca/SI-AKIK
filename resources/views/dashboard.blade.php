@@ -328,6 +328,11 @@
                                 <input type="hidden" name="year" value="{{ session('tahun_anggaran', date('Y')) }}">
                                 
                                 <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Cetak</label>
+                                    <input type="date" name="tanggal_cetak" required value="{{ date('Y-m-d') }}" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-bedas-500 focus:border-bedas-500">
+                                </div>
+
+                                <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Filter Bulan</label>
                                     <select name="bulan" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-bedas-500 focus:border-bedas-500">
                                         <option value="all">Semua Bulan</option>

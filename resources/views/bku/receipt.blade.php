@@ -128,7 +128,7 @@
 
         .qr-section {
             margin-top: 10px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 10px;
             padding: 6px 10px;
@@ -357,12 +357,12 @@
                     <img src="{{ $qrCodeDataUri }}" width="100" height="100" style="display: block;">
                 </div>
                 <!-- <div class="qr-info">
-                    <div class="qr-title">Scan QR untuk Verifikasi & Tracking</div>
-                    <div>No. Bukti: {{ $bku->no_bukti }}</div>
-                    <div>Nominal: Rp {{ number_format($bku->nominal, 0, ',', '.') }}</div>
-                    <div>Tanggal: {{ \Carbon\Carbon::parse($bku->tanggal)->isoFormat('D MMMM Y') }}</div>
-                    <div class="qr-hash">ID: {{ $bku->qr_code_hash }}</div>
-                </div> -->
+                        <div class="qr-title">Scan QR untuk Verifikasi & Tracking</div>
+                        <div>No. Bukti: {{ $bku->no_bukti }}</div>
+                        <div>Nominal: Rp {{ number_format($bku->nominal, 0, ',', '.') }}</div>
+                        <div>Tanggal: {{ \Carbon\Carbon::parse($bku->tanggal)->isoFormat('D MMMM Y') }}</div>
+                        <div class="qr-hash">ID: {{ $bku->qr_code_hash }}</div>
+                    </div> -->
             </div>
         @endif
     </div>

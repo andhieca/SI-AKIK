@@ -17,7 +17,7 @@
         .container {
             width: 100%;
             border: 3px double #000;
-            padding: 2px;
+            padding: 3px;
             box-sizing: border-box;
             height: 45%;
         }

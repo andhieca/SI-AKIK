@@ -455,7 +455,7 @@
                                 <label for="no_bukti" class="block text-sm font-medium text-gray-700 mb-1">No. Bukti</label>
                                 <input type="text" name="no_bukti" id="no_bukti" x-model="form.no_bukti"
                                     class="w-full rounded-lg border-gray-300 focus:border-bedas-500 focus:ring focus:ring-bedas-200 transition duration-200 bg-gray-50 text-gray-500 cursor-not-allowed"
-                                    placeholder="Contoh: 001/BKU/2026" readonly required>
+                                    placeholder="Contoh: 001/BKU/2026" required>
                             </div>
                         </div>
 

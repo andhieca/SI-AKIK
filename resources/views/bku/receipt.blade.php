@@ -19,7 +19,8 @@
             border: 3px double #000;
             padding: 3px;
             box-sizing: border-box;
-            height: 45%;
+            height: auto;
+            min-height: 45%;
         }
 
         .header {

@@ -179,11 +179,14 @@
 
         <div class="sub-header">KUITANSI</div>
 
-        <table class="info-table">
+        <table style="width: 100%; border: none; margin-bottom: 5px;">
             <tr>
-                <td width="120">Tahun Anggaran</td>
-                <td width="10">:</td>
-                <td>{{ \Carbon\Carbon::parse($bku->tanggal)->year }}</td>
+                <td style="vertical-align: top;">
+                    <table class="info-table">
+                        <tr>
+                            <td width="120">Tahun Anggaran</td>
+                            <td width="10">:</td>
+                            <td>{{ \Carbon\Carbon::parse($bku->tanggal)->year }}</td>
             </tr>
             <tr>
                 <td>Nomor Kuitansi</td>
@@ -209,6 +212,18 @@
                     <td>{{ $bku->nama_sub_kegiatan }}</td>
                 </tr>
             @endif
+                    </table>
+                </td>
+                @if(isset($qrCodeDataUri) && $qrCodeDataUri)
+                    <td style="vertical-align: top; text-align: right; width: 120px;">
+                        <div class="qr-section" style="margin-top: 0; display: inline-block;">
+                            <div class="qr-image">
+                                <img src="{{ $qrCodeDataUri }}" width="100" height="100" style="display: block;">
+                            </div>
+                        </div>
+                    </td>
+                @endif
+            </tr>
         </table>
 
         <div class="main-table">
@@ -351,20 +366,6 @@
             </tr>
         </table>
 
-        @if(isset($qrCodeDataUri) && $qrCodeDataUri)
-            <div class="qr-section">
-                <div class="qr-image">
-                    <img src="{{ $qrCodeDataUri }}" width="100" height="100" style="display: block;">
-                </div>
-                <!-- <div class="qr-info">
-                                    <div class="qr-title">Scan QR untuk Verifikasi & Tracking</div>
-                                    <div>No. Bukti: {{ $bku->no_bukti }}</div>
-                                    <div>Nominal: Rp {{ number_format($bku->nominal, 0, ',', '.') }}</div>
-                                    <div>Tanggal: {{ \Carbon\Carbon::parse($bku->tanggal)->isoFormat('D MMMM Y') }}</div>
-                                    <div class="qr-hash">ID: {{ $bku->qr_code_hash }}</div>
-                                </div> -->
-            </div>
-        @endif
     </div>
 </body>
 

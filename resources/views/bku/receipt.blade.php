@@ -17,7 +17,7 @@
         .container {
             width: 100%;
             border: 3px double #000;
-            padding: 10px;
+            padding: 5px;
             box-sizing: border-box;
             height: 45%;
         }
@@ -187,31 +187,31 @@
                             <td width="120">Tahun Anggaran</td>
                             <td width="10">:</td>
                             <td>{{ \Carbon\Carbon::parse($bku->tanggal)->year }}</td>
-            </tr>
-            <tr>
-                <td>Nomor Kuitansi</td>
-                <td>:</td>
-                <td>{{ $bku->no_bukti }}</td>
-            </tr>
-            <tr>
-                <td>Kode Rekening</td>
-                <td>:</td>
-                <td>{{ $bku->kode_rekening }}</td>
-            </tr>
-            @if($bku->kode_sub_kegiatan)
-                <tr>
-                    <td>Kode Sub Kegiatan</td>
-                    <td>:</td>
-                    <td>{{ $bku->kode_sub_kegiatan }}</td>
-                </tr>
-            @endif
-            @if($bku->nama_sub_kegiatan)
-                <tr>
-                    <td>Nama Sub Kegiatan</td>
-                    <td>:</td>
-                    <td>{{ $bku->nama_sub_kegiatan }}</td>
-                </tr>
-            @endif
+                        </tr>
+                        <tr>
+                            <td>Nomor Kuitansi</td>
+                            <td>:</td>
+                            <td>{{ $bku->no_bukti }}</td>
+                        </tr>
+                        <tr>
+                            <td>Kode Rekening</td>
+                            <td>:</td>
+                            <td>{{ $bku->kode_rekening }}</td>
+                        </tr>
+                        @if($bku->kode_sub_kegiatan)
+                            <tr>
+                                <td>Kode Sub Kegiatan</td>
+                                <td>:</td>
+                                <td>{{ $bku->kode_sub_kegiatan }}</td>
+                            </tr>
+                        @endif
+                        @if($bku->nama_sub_kegiatan)
+                            <tr>
+                                <td>Nama Sub Kegiatan</td>
+                                <td>:</td>
+                                <td>{{ $bku->nama_sub_kegiatan }}</td>
+                            </tr>
+                        @endif
                     </table>
                 </td>
                 @if(isset($qrCodeDataUri) && $qrCodeDataUri)

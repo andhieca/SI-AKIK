@@ -385,10 +385,30 @@
                         </div>
                     @endif
 
-                    <form method="POST" :action="formAction" class="p-6 space-y-4">
+                    <form method="POST" :action="formAction" class="p-6 space-y-4" @submit.prevent="submitForm($event)">
                         @csrf
                         <input type="hidden" name="_method" :value="isEdit ? 'PUT' : 'POST'">
                         <input type="hidden" name="id" x-model="form.id">
+
+                        <!-- Client-side Validation Errors -->
+                        <div x-show="Object.keys(errors).length > 0" x-transition
+                            class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-red-800">Mohon perbaiki kesalahan berikut:</h3>
+                                    <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                                        <template x-for="msg in Object.values(errors)" :key="msg">
+                                            <li x-text="msg"></li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -397,6 +417,8 @@
                                     <input type="text" name="tanggal" id="tanggal" x-model="form.tanggal"
                                         placeholder="dd/mm/yyyy"
                                         class="w-full rounded-lg border-gray-300 focus:border-bedas-500 focus:ring focus:ring-bedas-200 transition duration-200"
+                                        :class="{'!border-red-500 !ring-red-200': errors.tanggal}"
+                                        @input="clearError('tanggal')"
                                         required>
 
                                     <!-- Date Picker Overlay -->
@@ -433,6 +455,8 @@
                                     Pencairan</label>
                                 <select name="jenis_pencairan" id="jenis_pencairan" x-model="form.jenis_pencairan"
                                     class="w-full rounded-lg border-gray-300 focus:border-bedas-500 focus:ring focus:ring-bedas-200 transition duration-200"
+                                    :class="{'!border-red-500 !ring-red-200': errors.jenis_pencairan}"
+                                    @change="clearError('jenis_pencairan')"
                                     required>
                                     <option value="">-- Pilih Jenis Pencairan --</option>
                                     <option value="UP">UP</option>
@@ -464,6 +488,8 @@
                                 Jawab</label>
                             <select name="pptk_id" id="pptk_id" x-model="form.pptk_id"
                                 class="w-full rounded-lg border-gray-300 focus:border-bedas-500 focus:ring focus:ring-bedas-200 transition duration-200"
+                                :class="{'!border-red-500 !ring-red-200': errors.pptk_id}"
+                                @change="clearError('pptk_id')"
                                 required>
                                 <option value="">-- Pilih PPTK --</option>
                                 @foreach($pptks as $pptk)
@@ -477,7 +503,11 @@
                                 Rekening</label>
                             <input type="text" name="kode_rekening" id="kode_rekening" x-model="form.kode_rekening"
                                 class="w-full rounded-lg border-gray-300 focus:border-bedas-500 focus:ring focus:ring-bedas-200 transition duration-200"
+                                :class="{'!border-red-500 !ring-red-200': errors.kode_rekening}"
+                                @input="clearError('kode_rekening')"
                                 placeholder="Contoh: 5.1.02.01.01.0001" required>
+                            <p x-show="errors.kode_rekening" x-text="errors.kode_rekening" class="text-red-500 text-xs mt-1"></p>
+                            <p class="text-gray-400 text-xs mt-1">Format: angka dipisahkan titik (cth: 5.1.02.01.01.0001)</p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -509,7 +539,10 @@
                             <label for="uraian" class="block text-sm font-medium text-gray-700 mb-1">Uraian</label>
                             <textarea name="uraian" id="uraian" rows="3" x-model="form.uraian"
                                 class="w-full rounded-lg border-gray-300 focus:border-bedas-500 focus:ring focus:ring-bedas-200 transition duration-200"
+                                :class="{'!border-red-500 !ring-red-200': errors.uraian}"
+                                @input="clearError('uraian')"
                                 placeholder="Jelaskan detail transaksi..." required></textarea>
+                            <p x-show="errors.uraian" x-text="errors.uraian" class="text-red-500 text-xs mt-1"></p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -518,7 +551,10 @@
                                     Penerima</label>
                                 <input type="text" name="penerima" id="penerima" x-model="form.penerima"
                                     class="w-full rounded-lg border-gray-300 focus:border-bedas-500 focus:ring focus:ring-bedas-200 transition duration-200"
+                                    :class="{'!border-red-500 !ring-red-200': errors.penerima}"
+                                    @input="clearError('penerima')"
                                     placeholder="Nama lengkap penerima" required>
+                                <p x-show="errors.penerima" x-text="errors.penerima" class="text-red-500 text-xs mt-1"></p>
                             </div>
 
                             <div>
@@ -529,10 +565,12 @@
                                         <span class="text-gray-500 sm:text-sm">Rp</span>
                                     </div>
                                     <input type="text" name="nominal" id="nominal" x-model="form.nominal"
-                                        x-on:input="form.nominal = $el.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"
+                                        x-on:input="form.nominal = $el.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'); clearError('nominal')"
                                         class="w-full rounded-lg border-gray-300 pl-10 focus:border-bedas-500 focus:ring focus:ring-bedas-200 transition duration-200"
+                                        :class="{'!border-red-500 !ring-red-200': errors.nominal}"
                                         placeholder="0" required>
                                 </div>
+                                <p x-show="errors.nominal" x-text="errors.nominal" class="text-red-500 text-xs mt-1"></p>
                             </div>
                         </div>
 
@@ -834,6 +872,7 @@
                     openImportModal: {{ session('import_errors') ? 'true' : 'false' }},
                     isEdit: {{ old('_method') === 'PUT' ? 'true' : 'false' }},
                     selectedTaxType: 'none',
+                    errors: {},
                     form: {
                         id: '{{ old('id') }}',
                         tanggal: '{{ old('tanggal', date('Y-m-d')) }}',
@@ -983,6 +1022,93 @@
                         this.$watch('form.jenis_pencairan', (value) => {
                             if (!this.isEdit) this.fetchNoBukti();
                         });
+                    },
+                    clearError(field) {
+                        if (this.errors[field]) {
+                            delete this.errors[field];
+                            this.errors = {...this.errors};
+                        }
+                    },
+                    validateForm() {
+                        this.errors = {};
+
+                        // Validasi Tanggal
+                        if (!this.form.tanggal || this.form.tanggal.trim() === '') {
+                            this.errors.tanggal = 'Tanggal wajib diisi.';
+                        } else {
+                            const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+                            if (!dateRegex.test(this.form.tanggal)) {
+                                this.errors.tanggal = 'Format tanggal harus dd/mm/yyyy.';
+                            } else {
+                                const parts = this.form.tanggal.split('/');
+                                const day = parseInt(parts[0], 10);
+                                const month = parseInt(parts[1], 10);
+                                const year = parseInt(parts[2], 10);
+                                const testDate = new Date(year, month - 1, day);
+                                if (testDate.getDate() !== day || testDate.getMonth() !== month - 1 || testDate.getFullYear() !== year) {
+                                    this.errors.tanggal = 'Tanggal tidak valid.';
+                                }
+                                if (year < 2020 || year > 2099) {
+                                    this.errors.tanggal = 'Tahun harus antara 2020-2099.';
+                                }
+                            }
+                        }
+
+                        // Validasi Jenis Pencairan
+                        if (!this.form.jenis_pencairan) {
+                            this.errors.jenis_pencairan = 'Jenis Pencairan wajib dipilih.';
+                        }
+
+                        // Validasi PPTK
+                        if (!this.form.pptk_id) {
+                            this.errors.pptk_id = 'PPTK Penanggung Jawab wajib dipilih.';
+                        }
+
+                        // Validasi Kode Rekening
+                        if (!this.form.kode_rekening || this.form.kode_rekening.trim() === '') {
+                            this.errors.kode_rekening = 'Kode Rekening wajib diisi.';
+                        } else {
+                            const kodeRekRegex = /^\d+(\.\.?\d+)+$/;
+                            const cleanKode = this.form.kode_rekening.trim();
+                            if (!/^\d+(\.\d+)+$/.test(cleanKode)) {
+                                this.errors.kode_rekening = 'Format Kode Rekening tidak valid. Gunakan angka dipisahkan titik (cth: 5.1.02.01.01.0001).';
+                            }
+                        }
+
+                        // Validasi Uraian
+                        if (!this.form.uraian || this.form.uraian.trim() === '') {
+                            this.errors.uraian = 'Uraian wajib diisi.';
+                        } else if (this.form.uraian.trim().length < 10) {
+                            this.errors.uraian = 'Uraian terlalu pendek, minimal 10 karakter.';
+                        }
+
+                        // Validasi Penerima
+                        if (!this.form.penerima || this.form.penerima.trim() === '') {
+                            this.errors.penerima = 'Nama Penerima wajib diisi.';
+                        } else if (this.form.penerima.trim().length < 3) {
+                            this.errors.penerima = 'Nama Penerima terlalu pendek, minimal 3 karakter.';
+                        }
+
+                        // Validasi Nominal
+                        const nominalClean = this.form.nominal ? this.form.nominal.toString().replace(/\./g, '') : '';
+                        if (!nominalClean || nominalClean === '' || nominalClean === '0') {
+                            this.errors.nominal = 'Nominal wajib diisi dan harus lebih dari 0.';
+                        } else if (isNaN(nominalClean) || parseInt(nominalClean) <= 0) {
+                            this.errors.nominal = 'Nominal harus berupa angka yang valid dan lebih dari 0.';
+                        }
+
+                        return Object.keys(this.errors).length === 0;
+                    },
+                    submitForm(event) {
+                        if (this.validateForm()) {
+                            event.target.submit();
+                        } else {
+                            // Scroll ke atas form untuk menampilkan error
+                            this.$nextTick(() => {
+                                const errorBox = event.target.querySelector('[x-show="Object.keys(errors).length > 0"]');
+                                if (errorBox) errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            });
+                        }
                     },
                     fetchNoBukti() {
                         if (this.isEdit) return; // Don't auto-generate when editing

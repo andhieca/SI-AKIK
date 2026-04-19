@@ -116,7 +116,7 @@
         style="background-image: url('{{ asset('public/images/bg-monitoring.jpg') }}');">
 
         <!-- Overlay backdrop -->
-        <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-[2px]"></div>
+        <div class="absolute inset-0 bg-gray-900/40"></div>
 
         <!-- Header -->
         <header

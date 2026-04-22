@@ -41,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/bku/download-template', [BkuController::class, 'downloadTemplate'])->name('bku.template');
     Route::post('/bku/import', [BkuController::class, 'import'])->name('bku.import');
     Route::get('/bku/generate-no-bukti', [BkuController::class, 'generateNoBukti'])->name('bku.generate_no_bukti');
+    Route::post('/bku/bulk-destroy', [BkuController::class, 'bulkDestroy'])->name('bku.bulk_destroy');
     Route::resource('bku', BkuController::class);
 
     // Settings Routes

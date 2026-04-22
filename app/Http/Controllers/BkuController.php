@@ -262,6 +262,34 @@ class BkuController extends Controller
         return redirect()->route('bku.index')->with('success', 'Transaksi berhasil dihapus.');
     }
 
+    public function bulkDestroy(Request $request)
+    {
+        if (auth()->user()->role !== 'admin') {
+            return redirect()->back()->with('error', 'Hanya admin yang dapat menghapus transaksi secara massal.');
+        }
+
+        $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:bku_transaksis,id',
+        ]);
+
+        $ids = $request->input('ids');
+
+        // Only delete transactions that are NOT validated
+        $deletable = BkuTransaksi::whereIn('id', $ids)->where('status_validasi', false);
+        $deletableCount = $deletable->count();
+        $skippedCount = count($ids) - $deletableCount;
+
+        $deletable->delete();
+
+        $message = "{$deletableCount} transaksi berhasil dihapus.";
+        if ($skippedCount > 0) {
+            $message .= " {$skippedCount} transaksi dilewati karena sudah divalidasi.";
+        }
+
+        return redirect()->route('bku.index')->with('success', $message);
+    }
+
     public function validasi(BkuTransaksi $bku)
     {
         if (auth()->user()->role !== 'pptk') {

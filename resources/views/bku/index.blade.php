@@ -133,6 +133,16 @@
                             };
                         @endphp
                         <tr>
+                            @if(auth()->user()->role === 'admin')
+                            <th class="px-4 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider w-10">
+                                <input type="checkbox" 
+                                    class="rounded border-gray-300 text-bedas-600 focus:ring-bedas-500 cursor-pointer"
+                                    @click="toggleSelectAll($event.target.checked)"
+                                    :checked="allSelectableChecked"
+                                    :indeterminate="selectedIds.length > 0 && !allSelectableChecked"
+                                    title="Pilih Semua">
+                            </th>
+                            @endif
                             <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 <a href="{{ request()->fullUrlWithQuery(['sort' => 'tanggal', 'direction' => request('sort', 'tanggal') === 'tanggal' && request('direction', 'desc') === 'desc' ? 'asc' : 'desc']) }}" class="flex items-center gap-1 hover:text-gray-800 transition">
                                     Tanggal {!! $renderSortIcon('tanggal') !!}
@@ -175,7 +185,22 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @forelse($transaksis as $transaksi)
-                            <tr class="hover:bg-gray-50 transition duration-150">
+                            <tr class="hover:bg-gray-50 transition duration-150" :class="selectedIds.includes({{ $transaksi->id }}) ? 'bg-bedas-50' : ''">
+                                @if(auth()->user()->role === 'admin')
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                    @if(!$transaksi->status_validasi)
+                                        <input type="checkbox" 
+                                            value="{{ $transaksi->id }}"
+                                            class="rounded border-gray-300 text-bedas-600 focus:ring-bedas-500 cursor-pointer"
+                                            :checked="selectedIds.includes({{ $transaksi->id }})"
+                                            @click="toggleSelect({{ $transaksi->id }})">
+                                    @else
+                                        <input type="checkbox" disabled
+                                            class="rounded border-gray-200 text-gray-300 cursor-not-allowed"
+                                            title="Transaksi tervalidasi tidak dapat dihapus">
+                                    @endif
+                                </td>
+                                @endif
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                     {{ $transaksi->tanggal->format('d/m/Y') }}
                                 </td>
@@ -313,7 +338,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-10 text-center text-gray-400">
+                                <td colspan="9" class="px-6 py-10 text-center text-gray-400">
                                     <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -332,6 +357,72 @@
                 {{ $transaksis->links() }}
             </div>
         </div>
+
+        @if(auth()->user()->role === 'admin')
+        <!-- Floating Bulk Action Bar -->
+        <div x-show="selectedIds.length > 0" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4"
+            class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-4 border border-gray-700" style="display: none;" x-cloak>
+            <div class="flex items-center gap-2">
+                <div class="bg-bedas-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm" x-text="selectedIds.length"></div>
+                <span class="text-sm font-medium">transaksi dipilih</span>
+            </div>
+            <div class="w-px h-8 bg-gray-600"></div>
+            <button type="button" @click="showBulkDeleteModal = true"
+                class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+                Hapus Terpilih
+            </button>
+            <button type="button" @click="selectedIds = []"
+                class="text-gray-400 hover:text-white transition" title="Batal Pilih">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Bulk Delete Confirmation Modal -->
+        <div x-show="showBulkDeleteModal" class="fixed inset-0 z-[100] overflow-y-auto" style="display: none;" x-cloak>
+            <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" x-show="showBulkDeleteModal"
+                x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showBulkDeleteModal = false">
+            </div>
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm z-[110] overflow-hidden transform transition-all"
+                    x-show="showBulkDeleteModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
+                    <div class="p-6 text-center">
+                        <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Hapus <span x-text="selectedIds.length"></span> Transaksi?</h3>
+                        <p class="text-gray-500 mb-6">Semua transaksi yang dipilih akan dihapus secara permanen. Transaksi yang sudah divalidasi akan dilewati.</p>
+                        <div class="flex flex-col gap-3">
+                            <form action="{{ route('bku.bulk_destroy') }}" method="POST">
+                                @csrf
+                                <template x-for="id in selectedIds" :key="id">
+                                    <input type="hidden" name="ids[]" :value="id">
+                                </template>
+                                <button type="submit"
+                                    class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg shadow-red-200 transition transform hover:-translate-y-0.5 active:scale-95">
+                                    Ya, Hapus Sekarang
+                                </button>
+                            </form>
+                            <button @click="showBulkDeleteModal = false"
+                                class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition active:scale-95">
+                                Batal
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
 
 
 
@@ -858,6 +949,27 @@
         <script>
             function bkuData() {
                 return {
+                    selectedIds: [],
+                    showBulkDeleteModal: false,
+                    selectableIds: @json($transaksis->filter(fn($t) => !$t->status_validasi)->pluck('id')->values()),
+                    get allSelectableChecked() {
+                        return this.selectableIds.length > 0 && this.selectableIds.every(id => this.selectedIds.includes(id));
+                    },
+                    toggleSelect(id) {
+                        const idx = this.selectedIds.indexOf(id);
+                        if (idx > -1) {
+                            this.selectedIds.splice(idx, 1);
+                        } else {
+                            this.selectedIds.push(id);
+                        }
+                    },
+                    toggleSelectAll(checked) {
+                        if (checked) {
+                            this.selectedIds = [...this.selectableIds];
+                        } else {
+                            this.selectedIds = [];
+                        }
+                    },
                     showPreviewModal: false,
                     previewUrl: '',
                     validasiUrl: '',

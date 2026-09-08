@@ -78,7 +78,23 @@ class BkuController extends Controller
             ->orderBy('kode')
             ->get();
 
-        return view('bku.index', compact('transaksis', 'pptks', 'subKegiatans', 'selectedJenisPencairan', 'selectedYear', 'sortColumn', 'sortDirection'));
+        // Get distinct jenis_pencairan values from existing data
+        $jenisPencairanList = \App\Models\BkuTransaksi::whereYear('tanggal', $selectedYear)
+            ->select('jenis_pencairan')
+            ->distinct()
+            ->pluck('jenis_pencairan')
+            ->sort(function ($a, $b) {
+                // Custom sort: UP first, then GU 1, GU 2, ..., then others alphabetically
+                $order = function ($val) {
+                    if ($val === 'UP') return 'A_0000';
+                    if (preg_match('/^GU\s+(\d+)$/', $val, $m)) return 'B_' . str_pad($m[1], 4, '0', STR_PAD_LEFT);
+                    return 'Z_' . $val;
+                };
+                return strcmp($order($a), $order($b));
+            })
+            ->values();
+
+        return view('bku.index', compact('transaksis', 'pptks', 'subKegiatans', 'selectedJenisPencairan', 'selectedYear', 'sortColumn', 'sortDirection', 'jenisPencairanList'));
     }
 
     public function store(Request $request)
@@ -116,7 +132,7 @@ class BkuController extends Controller
             'uraian' => 'required|string|min:10',
             'penerima' => 'required|string|min:3|max:255',
             'nominal' => 'required|numeric|gt:0',
-            'jenis_pencairan' => 'required|string|in:UP,GU 1,GU 2,GU 3,GU 4,GU 5,GU 6,GU 7,GU 8,GU 9,GU 10,GU 11,GU 12',
+            'jenis_pencairan' => 'required|string',
             'pptk_id' => 'required|exists:pejabats,id',
             'pph21' => 'nullable|numeric|min:0',
             'pph22' => 'nullable|numeric|min:0',
@@ -201,7 +217,7 @@ class BkuController extends Controller
             'uraian' => 'required|string|min:10',
             'penerima' => 'required|string|min:3|max:255',
             'nominal' => 'required|numeric|gt:0',
-            'jenis_pencairan' => 'required|string|in:UP,GU 1,GU 2,GU 3,GU 4,GU 5,GU 6,GU 7,GU 8,GU 9,GU 10,GU 11,GU 12',
+            'jenis_pencairan' => 'required|string',
             'pptk_id' => 'required|exists:pejabats,id',
             'pph21' => 'nullable|numeric|min:0',
             'pph22' => 'nullable|numeric|min:0',

@@ -12,11 +12,10 @@
                         class="rounded-lg border-gray-300 focus:border-bedas-500 focus:ring focus:ring-bedas-200">
                         <option value="all" {{ $selectedJenisPencairan == 'all' ? 'selected' : '' }}>Semua Jenis Pencairan
                         </option>
-                        <option value="UP" {{ $selectedJenisPencairan == 'UP' ? 'selected' : '' }}>UP</option>
-                        @for ($i = 1; $i <= 12; $i++)
-                            <option value="GU {{ $i }}" {{ $selectedJenisPencairan == 'GU ' . $i ? 'selected' : '' }}>GU {{ $i }}
+                        @foreach ($jenisPencairanList as $jp)
+                            <option value="{{ $jp }}" {{ $selectedJenisPencairan == $jp ? 'selected' : '' }}>{{ $jp }}
                             </option>
-                        @endfor
+                        @endforeach
                     </select>
                     <span class="text-gray-400 mx-1">|</span>
 
@@ -550,19 +549,9 @@
                                     @change="clearError('jenis_pencairan')"
                                     required>
                                     <option value="">-- Pilih Jenis Pencairan --</option>
-                                    <option value="UP">UP</option>
-                                    <option value="GU 1">GU 1</option>
-                                    <option value="GU 2">GU 2</option>
-                                    <option value="GU 3">GU 3</option>
-                                    <option value="GU 4">GU 4</option>
-                                    <option value="GU 5">GU 5</option>
-                                    <option value="GU 6">GU 6</option>
-                                    <option value="GU 7">GU 7</option>
-                                    <option value="GU 8">GU 8</option>
-                                    <option value="GU 9">GU 9</option>
-                                    <option value="GU 10">GU 10</option>
-                                    <option value="GU 11">GU 11</option>
-                                    <option value="GU 12">GU 12</option>
+                                    @foreach ($jenisPencairanList as $jp)
+                                        <option value="{{ $jp }}">{{ $jp }}</option>
+                                    @endforeach
                                 </select>
                             </div>
 

@@ -355,18 +355,9 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Filter Jenis Pencairan</label>
                                     <select name="jenis_pencairan" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-bedas-500 focus:border-bedas-500">
                                         <option value="all">Semua Jenis Pencairan</option>
-                                        <option value="UP">Uang Persediaan (UP)</option>
-                                        <option value="GU 1">Ganti Uang (GU) 1</option>
-                                        <option value="GU 2">Ganti Uang (GU) 2</option>
-                                        <option value="GU 3">Ganti Uang (GU) 3</option>
-                                        <option value="GU 4">Ganti Uang (GU) 4</option>
-                                        <option value="GU 5">Ganti Uang (GU) 5</option>
-                                        <option value="GU 6">Ganti Uang (GU) 6</option>
-                                        <option value="GU 7">Ganti Uang (GU) 7</option>
-                                        <option value="GU 8">Ganti Uang (GU) 8</option>
-                                        <option value="GU 9">Ganti Uang (GU) 9</option>
-                                        <option value="LS">Langsung (LS)</option>
-                                        <option value="TU">Tambah Uang (TU)</option>
+                                        @foreach ($jenisPencairanList as $jp)
+                                            <option value="{{ $jp }}">{{ $jp }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>

@@ -143,7 +143,22 @@ class DashboardController extends Controller
             'PPh Pasal 4 (Final)' => (clone $queryBku)->where('pph4_final', '>', 0)->get(['tanggal', 'no_bukti', 'uraian', 'pph4_final as nominal_pajak']),
         ];
 
-        return compact('totalAnggaran', 'totalRealisasi', 'sisaKas', 'latestTransaksis', 'verificationResult', 'realisasiPerProgram', 'realisasiPerJenis', 'grafikKuitansi', 'validatedCount', 'unvalidatedCount', 'unvalidatedNominal', 'validatedNominal', 'statsPerPptk', 'rekapPajak', 'detailPajak');
+        // Get distinct jenis_pencairan values from existing data
+        $jenisPencairanList = \App\Models\BkuTransaksi::whereYear('tanggal', $tahun)
+            ->select('jenis_pencairan')
+            ->distinct()
+            ->pluck('jenis_pencairan')
+            ->sort(function ($a, $b) {
+                $order = function ($val) {
+                    if ($val === 'UP') return 'A_0000';
+                    if (preg_match('/^GU\s+(\d+)$/', $val, $m)) return 'B_' . str_pad($m[1], 4, '0', STR_PAD_LEFT);
+                    return 'Z_' . $val;
+                };
+                return strcmp($order($a), $order($b));
+            })
+            ->values();
+
+        return compact('totalAnggaran', 'totalRealisasi', 'sisaKas', 'latestTransaksis', 'verificationResult', 'realisasiPerProgram', 'realisasiPerJenis', 'grafikKuitansi', 'validatedCount', 'unvalidatedCount', 'unvalidatedNominal', 'validatedNominal', 'statsPerPptk', 'rekapPajak', 'detailPajak', 'jenisPencairanList');
     }
 
     public function index(\Illuminate\Http\Request $request)

@@ -543,16 +543,12 @@
                             <div>
                                 <label for="jenis_pencairan" class="block text-sm font-medium text-gray-700 mb-1">Jenis
                                     Pencairan</label>
-                                <select name="jenis_pencairan" id="jenis_pencairan" x-model="form.jenis_pencairan"
+                                <input type="text" name="jenis_pencairan" id="jenis_pencairan" x-model="form.jenis_pencairan"
                                     class="w-full rounded-lg border-gray-300 focus:border-bedas-500 focus:ring focus:ring-bedas-200 transition duration-200"
                                     :class="{'!border-red-500 !ring-red-200': errors.jenis_pencairan}"
-                                    @change="clearError('jenis_pencairan')"
+                                    @input="clearError('jenis_pencairan')"
+                                    placeholder="Contoh: UP, GU 1, GU KKPD 1"
                                     required>
-                                    <option value="">-- Pilih Jenis Pencairan --</option>
-                                    @foreach ($jenisPencairanList as $jp)
-                                        <option value="{{ $jp }}">{{ $jp }}</option>
-                                    @endforeach
-                                </select>
                             </div>
 
                             <div>

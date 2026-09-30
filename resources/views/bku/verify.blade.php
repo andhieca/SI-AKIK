@@ -107,6 +107,30 @@
                     <p class="text-base font-semibold text-gray-800">{{ $bku->nama_pptk ?? ($bku->pptk ? $bku->pptk->nama : '-') }}</p>
                 </div>
 
+                {{-- Link Drive Fisik SPJ --}}
+                @if($bku->link_drive)
+                <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-4 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-800 font-semibold uppercase tracking-wider">Fisik SPJ (Google Drive)</p>
+                            <p class="text-xs text-gray-500 truncate max-w-xs md:max-w-md">{{ $bku->link_drive }}</p>
+                        </div>
+                    </div>
+                    <a href="{{ $bku->link_drive }}" target="_blank"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition whitespace-nowrap">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                        Buka Dokumen
+                    </a>
+                </div>
+                @endif
+
                 {{-- Pajak Section --}}
                 @php
                     $taxes = [

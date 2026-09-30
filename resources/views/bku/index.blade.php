@@ -215,7 +215,19 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-800 font-medium">
-                                    {{ $transaksi->uraian }}
+                                    <div>{{ $transaksi->uraian }}</div>
+                                    @if($transaksi->link_drive)
+                                        <div class="mt-1.5">
+                                            <a href="{{ $transaksi->link_drive }}" target="_blank"
+                                                class="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded-md border border-blue-200 transition font-medium"
+                                                title="Buka fisik SPJ di Google Drive">
+                                                <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                </svg>
+                                                Fisik SPJ
+                                            </a>
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-800 font-medium whitespace-nowrap">
                                     {{ $transaksi->nama_pptk ?? ($transaksi->pptk ? $transaksi->pptk->nama : '-') }}
@@ -264,7 +276,7 @@
                                         @if(auth()->user()->role === 'pptk')
                                             @if(!$transaksi->status_validasi)
                                                 <!-- Preview & Validasi (PPTK) -->
-                                                <button type="button" @click="openPreviewModal('{{ route('bku.print', $transaksi->id) }}', '{{ route('bku.validasi', $transaksi->id) }}', 'Kuitansi {{ $transaksi->no_bukti }}')"
+                                                <button type="button" @click="openPreviewModal('{{ route('bku.print', $transaksi->id) }}', '{{ route('bku.validasi', $transaksi->id) }}', 'Kuitansi {{ $transaksi->no_bukti }}', '{{ $transaksi->link_drive }}')"
                                                     class="text-green-600 hover:text-green-800 bg-green-50 hover:bg-green-100 p-1.5 rounded-lg transition" title="Validasi">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -272,7 +284,7 @@
                                                 </button>
                                             @else
                                                 <!-- Preview Only (PPTK, sudah divalidasi) -->
-                                                <button type="button" @click="openPreviewModal('{{ route('bku.print', $transaksi->id) }}', '', 'Kuitansi {{ $transaksi->no_bukti }}')"
+                                                <button type="button" @click="openPreviewModal('{{ route('bku.print', $transaksi->id) }}', '', 'Kuitansi {{ $transaksi->no_bukti }}', '{{ $transaksi->link_drive }}')"
                                                     class="text-blue-500 hover:text-blue-700 transition inline-block mr-1" title="Preview Kuitansi">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -650,6 +662,40 @@
                             </div>
                         </div>
 
+                        <!-- Link Drive Fisik SPJ -->
+                        <div>
+                            <label for="link_drive" class="block text-sm font-medium text-gray-700 mb-1">
+                                Link Drive Fisik SPJ <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
+                            </label>
+                            <div class="relative rounded-md shadow-sm">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                    </svg>
+                                </div>
+                                <input type="text" name="link_drive" id="link_drive" x-model="form.link_drive"
+                                    class="w-full rounded-lg border-gray-300 pl-10 focus:border-bedas-500 focus:ring focus:ring-bedas-200 transition duration-200 text-sm"
+                                    :class="{'!border-red-500 !ring-red-200': errors.link_drive}"
+                                    @input="clearError('link_drive')"
+                                    placeholder="Contoh: https://drive.google.com/drive/folders/...">
+                                <template x-if="form.link_drive && form.link_drive.trim() !== ''">
+                                    <a :href="form.link_drive.startsWith('http') ? form.link_drive : 'https://' + form.link_drive"
+                                        target="_blank"
+                                        class="absolute inset-y-0 right-0 px-3 flex items-center text-xs font-semibold text-bedas-600 hover:text-bedas-800 bg-gray-50 hover:bg-gray-100 rounded-r-lg border-l border-gray-300 transition"
+                                        title="Buka link drive">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        </svg>
+                                        Buka
+                                    </a>
+                                </template>
+                            </div>
+                            <p x-show="errors.link_drive" x-text="errors.link_drive" class="text-red-500 text-xs mt-1"></p>
+                            <p class="text-gray-400 text-xs mt-1">Tautan Google Drive atau cloud storage untuk dokumen fisik SPJ.</p>
+                        </div>
+
                         <!-- Tax Fields (Optional) -->
                         <div class="pt-4 border-t border-gray-100">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Pajak</label>
@@ -823,7 +869,7 @@
                                 <li><b>penerima</b></li>
                                 <li><b>nominal</b></li>
                                 <li><b>pptk</b> (nama PPTK sesuai data pejabat)</li>
-                                <li>Optional: <b>pph21, pph22, pph23, ppn, pajak_daerah, pph4_final</b></li>
+                                <li>Optional: <b>pph21, pph22, pph23, ppn, pajak_daerah, pph4_final, link_drive</b></li>
                             </ul>
                         </div>
 
@@ -857,7 +903,18 @@
                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
 
                     <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 flex-shrink-0">
-                        <h2 class="text-xl font-bold text-gray-800" x-text="previewTitle">Preview Kuitansi</h2>
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-xl font-bold text-gray-800" x-text="previewTitle">Preview Kuitansi</h2>
+                            <template x-if="previewLinkDrive">
+                                <a :href="previewLinkDrive.startsWith('http') ? previewLinkDrive : 'https://' + previewLinkDrive" target="_blank"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg border border-blue-200 transition shadow-sm">
+                                    <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                    </svg>
+                                    Buka Fisik SPJ (Drive)
+                                </a>
+                            </template>
+                        </div>
                         <button @click="showPreviewModal = false" class="text-gray-400 hover:text-gray-600 focus:outline-none">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -959,10 +1016,12 @@
                     previewUrl: '',
                     validasiUrl: '',
                     previewTitle: 'Preview',
-                    openPreviewModal(url, validasiUrl, title) {
+                    previewLinkDrive: '',
+                    openPreviewModal(url, validasiUrl, title, linkDrive = '') {
                         this.previewUrl = url;
                         this.validasiUrl = validasiUrl;
                         this.previewTitle = title;
+                        this.previewLinkDrive = linkDrive;
                         this.showPreviewModal = true;
                     },
                     showModal: {{ $errors->any() && !session('import_errors') ? 'true' : 'false' }},
@@ -980,6 +1039,7 @@
                         uraian: '{{ old('uraian') }}',
                         penerima: '{{ old('penerima') }}',
                         nominal: '{{ old('nominal') }}',
+                        link_drive: '{{ old('link_drive') }}',
                         jenis_pencairan: '{{ old('jenis_pencairan') }}',
                         pptk_id: '{{ old('pptk_id') }}',
                         jenis_anggaran: 'Murni',
@@ -1016,6 +1076,7 @@
                             uraian: '',
                             penerima: '',
                             nominal: '',
+                            link_drive: '',
                             jenis_pencairan: '',
                             pptk_id: '',
                             jenis_anggaran: 'Murni',
@@ -1077,6 +1138,7 @@
                             uraian: data.uraian,
                             penerima: data.penerima,
                             nominal: nominalFormatted,
+                            link_drive: data.link_drive || '',
                             jenis_pencairan: data.jenis_pencairan,
                             pptk_id: data.pptk_id,
                             pph21: pph21Formatted,
@@ -1192,6 +1254,15 @@
                             this.errors.nominal = 'Nominal wajib diisi dan harus lebih dari 0.';
                         } else if (isNaN(nominalClean) || parseInt(nominalClean) <= 0) {
                             this.errors.nominal = 'Nominal harus berupa angka yang valid dan lebih dari 0.';
+                        }
+
+                        // Validasi Link Drive (opsional, jika diisi harus URL yang valid)
+                        if (this.form.link_drive && this.form.link_drive.trim() !== '') {
+                            const driveTrim = this.form.link_drive.trim();
+                            const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/i;
+                            if (!urlPattern.test(driveTrim)) {
+                                this.errors.link_drive = 'Format tautan Link Drive tidak valid.';
+                            }
                         }
 
                         return Object.keys(this.errors).length === 0;

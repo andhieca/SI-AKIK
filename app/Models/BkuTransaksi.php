@@ -18,6 +18,7 @@ class BkuTransaksi extends Model
         'uraian',
         'penerima',
         'nominal',
+        'link_drive',
         'jenis_pencairan',
         'qr_code_hash',
         'status_cetak',

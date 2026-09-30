@@ -111,10 +111,16 @@ class BkuController extends Controller
             }
         };
 
+        $linkDrive = $request->link_drive ? trim($request->link_drive) : null;
+        if ($linkDrive && !preg_match('~^(?:f|ht)tps?://~i', $linkDrive)) {
+            $linkDrive = 'https://' . $linkDrive;
+        }
+
         // Remove dots or commas from nominal before validation
         $request->merge([
             'tanggal' => str_contains($request->tanggal, '/') ? $parseDate($request->tanggal) : $request->tanggal,
             'nominal' => str_replace(['.', ','], '', $request->nominal),
+            'link_drive' => $linkDrive,
             'pph21' => $request->pph21 ? str_replace(['.', ','], '', $request->pph21) : 0,
             'pph22' => $request->pph22 ? str_replace(['.', ','], '', $request->pph22) : 0,
             'pph23' => $request->pph23 ? str_replace(['.', ','], '', $request->pph23) : 0,
@@ -132,6 +138,7 @@ class BkuController extends Controller
             'uraian' => 'required|string|min:10',
             'penerima' => 'required|string|min:3|max:255',
             'nominal' => 'required|numeric|gt:0',
+            'link_drive' => 'nullable|url|max:1000',
             'jenis_pencairan' => 'required|string',
             'pptk_id' => 'required|exists:pejabats,id',
             'pph21' => 'nullable|numeric|min:0',
@@ -153,6 +160,7 @@ class BkuController extends Controller
             'nominal.required' => 'Nominal wajib diisi.',
             'nominal.gt' => 'Nominal harus lebih dari 0.',
             'nominal.numeric' => 'Nominal harus berupa angka yang valid.',
+            'link_drive.url' => 'Format Link Drive fisik SPJ tidak valid (harus berupa link URL valid).',
             'jenis_pencairan.required' => 'Jenis Pencairan wajib dipilih.',
             'jenis_pencairan.in' => 'Jenis Pencairan yang dipilih tidak valid.',
             'pptk_id.required' => 'PPTK Penanggung Jawab wajib dipilih.',
@@ -196,10 +204,16 @@ class BkuController extends Controller
             }
         };
 
+        $linkDrive = $request->link_drive ? trim($request->link_drive) : null;
+        if ($linkDrive && !preg_match('~^(?:f|ht)tps?://~i', $linkDrive)) {
+            $linkDrive = 'https://' . $linkDrive;
+        }
+
         // Remove dots or commas from nominal before validation
         $request->merge([
             'tanggal' => str_contains($request->tanggal, '/') ? $parseDate($request->tanggal) : $request->tanggal,
             'nominal' => str_replace(['.', ','], '', $request->nominal),
+            'link_drive' => $linkDrive,
             'pph21' => $request->pph21 ? str_replace(['.', ','], '', $request->pph21) : 0,
             'pph22' => $request->pph22 ? str_replace(['.', ','], '', $request->pph22) : 0,
             'pph23' => $request->pph23 ? str_replace(['.', ','], '', $request->pph23) : 0,
@@ -217,6 +231,7 @@ class BkuController extends Controller
             'uraian' => 'required|string|min:10',
             'penerima' => 'required|string|min:3|max:255',
             'nominal' => 'required|numeric|gt:0',
+            'link_drive' => 'nullable|url|max:1000',
             'jenis_pencairan' => 'required|string',
             'pptk_id' => 'required|exists:pejabats,id',
             'pph21' => 'nullable|numeric|min:0',
@@ -238,6 +253,7 @@ class BkuController extends Controller
             'nominal.required' => 'Nominal wajib diisi.',
             'nominal.gt' => 'Nominal harus lebih dari 0.',
             'nominal.numeric' => 'Nominal harus berupa angka yang valid.',
+            'link_drive.url' => 'Format Link Drive fisik SPJ tidak valid (harus berupa link URL valid).',
             'jenis_pencairan.required' => 'Jenis Pencairan wajib dipilih.',
             'jenis_pencairan.in' => 'Jenis Pencairan yang dipilih tidak valid.',
             'pptk_id.required' => 'PPTK Penanggung Jawab wajib dipilih.',
@@ -550,6 +566,7 @@ class BkuController extends Controller
                     'uraian' => $row['uraian'],
                     'penerima' => $row['penerima'],
                     'nominal' => $cleanNominal($row['nominal'] ?? 0),
+                    'link_drive' => $row['link_drive'] ?? $row['link_spj'] ?? $row['link_drive_spj'] ?? null,
                     'jenis_pencairan' => $row['jenis_pencairan'],
                     'pptk_id' => $pptkId,
                     'pph21' => $cleanNominal($row['pph21'] ?? 0),

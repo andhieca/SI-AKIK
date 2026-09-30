@@ -250,22 +250,34 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
                                     <div class="flex items-center justify-center space-x-2">
-                                        {{-- Tombol Lihat SPJ jika ada link drive --}}
+                                        {{-- Tombol Menuju Link Google Drive --}}
                                         @if($transaksi->link_drive)
                                             <a href="{{ $transaksi->link_drive }}" target="_blank"
-                                                class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 p-1.5 rounded-lg transition"
-                                                title="Lihat Fisik SPJ (Google Drive)">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                class="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition inline-flex items-center shadow-xs transform hover:scale-110"
+                                                title="Buka Fisik SPJ di Google Drive">
+                                                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                                    <path fill="#FFBB00" d="M15.8 3.8H8.2l3.3 5.7h7.6l3.3-5.7z"/>
+                                                    <path fill="#0F9D58" d="M8.2 3.8l-7 12.2 3.3 5.7 7-12.2-3.3-5.7z"/>
+                                                    <path fill="#4285F4" d="M4.5 21.7h11.5l3.3-5.7H7.8l-3.3 5.7z"/>
                                                 </svg>
                                             </a>
+                                        @else
+                                            <button type="button"
+                                                @click="openLinkDriveModal({{ $transaksi->id }}, '{{ addslashes($transaksi->no_bukti) }}', '')"
+                                                class="p-1.5 rounded-lg bg-gray-50 hover:bg-indigo-50 transition inline-flex items-center group opacity-40 hover:opacity-100"
+                                                title="Belum ada link drive. Klik untuk mengisi tautan fisik SPJ.">
+                                                <svg class="w-5 h-5 filter grayscale group-hover:filter-none transition" viewBox="0 0 24 24">
+                                                    <path fill="#FFBB00" d="M15.8 3.8H8.2l3.3 5.7h7.6l3.3-5.7z"/>
+                                                    <path fill="#0F9D58" d="M8.2 3.8l-7 12.2 3.3 5.7 7-12.2-3.3-5.7z"/>
+                                                    <path fill="#4285F4" d="M4.5 21.7h11.5l3.3-5.7H7.8l-3.3 5.7z"/>
+                                                </svg>
+                                            </button>
                                         @endif
 
                                         {{-- Tombol Input / Ubah Link Drive Fisik SPJ (Selalu Aktif Walau Sudah Divalidasi) --}}
                                         <button type="button"
                                             @click="openLinkDriveModal({{ $transaksi->id }}, '{{ addslashes($transaksi->no_bukti) }}', '{{ addslashes($transaksi->link_drive ?? '') }}')"
-                                            class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 p-1.5 rounded-lg transition"
+                                            class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 p-1.5 rounded-lg transition inline-flex items-center"
                                             title="{{ $transaksi->link_drive ? 'Ubah Link Drive Fisik SPJ' : 'Masukkan Link Drive Fisik SPJ' }}">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
@@ -1073,11 +1085,13 @@
                             <div>
                                 <template x-if="linkDriveValue && linkDriveValue.trim() !== ''">
                                     <a :href="linkDriveValue.startsWith('http') ? linkDriveValue : 'https://' + linkDriveValue" target="_blank"
-                                        class="inline-flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-800 font-semibold bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200 transition">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        class="inline-flex items-center gap-1.5 text-xs text-emerald-700 hover:text-emerald-900 font-semibold bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24">
+                                            <path fill="#FFBB00" d="M15.8 3.8H8.2l3.3 5.7h7.6l3.3-5.7z"/>
+                                            <path fill="#0F9D58" d="M8.2 3.8l-7 12.2 3.3 5.7 7-12.2-3.3-5.7z"/>
+                                            <path fill="#4285F4" d="M4.5 21.7h11.5l3.3-5.7H7.8l-3.3 5.7z"/>
                                         </svg>
-                                        Buka Tautan
+                                        Buka Google Drive
                                     </a>
                                 </template>
                             </div>

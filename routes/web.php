@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/bku/{bku}/validasi', [BkuController::class, 'validasi'])->name('bku.validasi');
     Route::post('/bku/{bku}/batal-validasi', [BkuController::class, 'batalValidasi'])->name('bku.batal_validasi');
+    Route::patch('/bku/{bku}/link-drive', [BkuController::class, 'updateLinkDrive'])->name('bku.update_link_drive');
     Route::get('/bku/{bku}/print', [BkuController::class, 'print'])->name('bku.print');
     Route::get('/bku/verify/{hash}', [BkuController::class, 'verify'])->name('bku.verify');
     Route::get('/bku/cetak', [BkuController::class, 'cetak'])->name('bku.cetak');

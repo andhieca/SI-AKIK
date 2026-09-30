@@ -249,7 +249,29 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
-                                    <div class="flex items-center justify-center space-x-3">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        {{-- Tombol Lihat SPJ jika ada link drive --}}
+                                        @if($transaksi->link_drive)
+                                            <a href="{{ $transaksi->link_drive }}" target="_blank"
+                                                class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 p-1.5 rounded-lg transition"
+                                                title="Lihat Fisik SPJ (Google Drive)">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            </a>
+                                        @endif
+
+                                        {{-- Tombol Input / Ubah Link Drive Fisik SPJ (Selalu Aktif Walau Sudah Divalidasi) --}}
+                                        <button type="button"
+                                            @click="openLinkDriveModal({{ $transaksi->id }}, '{{ addslashes($transaksi->no_bukti) }}', '{{ addslashes($transaksi->link_drive ?? '') }}')"
+                                            class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 p-1.5 rounded-lg transition"
+                                            title="{{ $transaksi->link_drive ? 'Ubah Link Drive Fisik SPJ' : 'Masukkan Link Drive Fisik SPJ' }}">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                            </svg>
+                                        </button>
+
                                         @if(auth()->user()->role === 'admin')
                                             <!-- Edit (Admin Only) -->
                                             @if(!$transaksi->status_validasi)
@@ -988,6 +1010,93 @@
             </div>
         </div>
 
+        <!-- Modal Kelola Link Drive Fisik SPJ (Bisa Kapan Saja Walau Sudah Divalidasi) -->
+        <div x-show="showLinkDriveModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-cloak>
+            <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" x-show="showLinkDriveModal"
+                x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showLinkDriveModal = false">
+            </div>
+
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg z-50 overflow-hidden transform transition-all"
+                    x-show="showLinkDriveModal" x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+
+                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shadow-sm">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-bold text-gray-800">Tautan Fisik SPJ</h2>
+                                <p class="text-xs text-gray-500 font-mono" x-text="linkDriveNoBukti"></p>
+                            </div>
+                        </div>
+                        <button @click="showLinkDriveModal = false" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form :action="'{{ url('bku') }}/' + linkDriveId + '/link-drive'" method="POST" class="p-6">
+                        @csrf
+                        @method('PATCH')
+
+                        <div class="mb-4">
+                            <label for="modal_link_drive" class="block text-sm font-medium text-gray-700 mb-1">
+                                Link Google Drive Fisik SPJ
+                            </label>
+                            <div class="relative rounded-md shadow-sm">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                    </svg>
+                                </div>
+                                <input type="text" name="link_drive" id="modal_link_drive" x-model="linkDriveValue"
+                                    class="w-full rounded-lg border-gray-300 pl-10 focus:border-indigo-500 focus:ring focus:ring-indigo-200 transition duration-200 text-sm"
+                                    placeholder="Contoh: https://drive.google.com/drive/folders/...">
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2">
+                                Link Google Drive dokumen fisik SPJ dapat ditambahkan atau diperbarui kapan saja, meskipun transaksi telah berstatus <b>Tervalidasi</b>.
+                            </p>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                            <div>
+                                <template x-if="linkDriveValue && linkDriveValue.trim() !== ''">
+                                    <a :href="linkDriveValue.startsWith('http') ? linkDriveValue : 'https://' + linkDriveValue" target="_blank"
+                                        class="inline-flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-800 font-semibold bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200 transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        </svg>
+                                        Buka Tautan
+                                    </a>
+                                </template>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="button" @click="showLinkDriveModal = false"
+                                    class="px-4 py-2 text-gray-700 font-semibold hover:bg-gray-100 rounded-lg transition text-sm">
+                                    Batal
+                                </button>
+                                <button type="submit"
+                                    class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md transition transform hover:-translate-y-0.5 text-sm">
+                                    Simpan Link
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <script>
             function bkuData() {
                 return {
@@ -1017,6 +1126,16 @@
                     validasiUrl: '',
                     previewTitle: 'Preview',
                     previewLinkDrive: '',
+                    showLinkDriveModal: false,
+                    linkDriveId: null,
+                    linkDriveNoBukti: '',
+                    linkDriveValue: '',
+                    openLinkDriveModal(id, noBukti, linkDrive) {
+                        this.linkDriveId = id;
+                        this.linkDriveNoBukti = noBukti;
+                        this.linkDriveValue = linkDrive || '';
+                        this.showLinkDriveModal = true;
+                    },
                     openPreviewModal(url, validasiUrl, title, linkDrive = '') {
                         this.previewUrl = url;
                         this.validasiUrl = validasiUrl;

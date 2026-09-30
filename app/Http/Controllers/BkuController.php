@@ -351,6 +351,27 @@ class BkuController extends Controller
 
         return redirect()->route('bku.index')->with('success', 'Validasi transaksi berhasil dibatalkan.');
     }
+
+    public function updateLinkDrive(Request $request, BkuTransaksi $bku)
+    {
+        $linkDrive = $request->link_drive ? trim($request->link_drive) : null;
+        if ($linkDrive && !preg_match('~^(?:f|ht)tps?://~i', $linkDrive)) {
+            $linkDrive = 'https://' . $linkDrive;
+        }
+
+        $request->merge(['link_drive' => $linkDrive]);
+
+        $validated = $request->validate([
+            'link_drive' => 'nullable|url|max:1000',
+        ], [
+            'link_drive.url' => 'Format Link Drive fisik SPJ tidak valid (harus berupa tautan URL valid).',
+        ]);
+
+        $bku->update(['link_drive' => $validated['link_drive']]);
+
+        return redirect()->back()->with('success', 'Link Drive fisik SPJ untuk nomor bukti ' . $bku->no_bukti . ' berhasil disimpan.');
+    }
+
     public function cetak(Request $request)
     {
         $selectedJenisPencairan = $request->input('jenis_pencairan', 'all');

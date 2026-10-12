@@ -94,7 +94,39 @@ class BkuController extends Controller
             })
             ->values();
 
-        return view('bku.index', compact('transaksis', 'pptks', 'subKegiatans', 'selectedJenisPencairan', 'selectedYear', 'sortColumn', 'sortDirection', 'jenisPencairanList'));
+        // --- SPJ Fisik Statistics ---
+        $spjBaseQuery = \App\Models\BkuTransaksi::whereYear('tanggal', $selectedYear);
+        if (auth()->user()->role === 'pptk') {
+            $spjBaseQuery->where('pptk_id', auth()->user()->pejabat_id);
+        }
+        $spjTotal = (clone $spjBaseQuery)->count();
+        $spjFilled = (clone $spjBaseQuery)->whereNotNull('link_drive')->where('link_drive', '!=', '')->count();
+        $spjEmpty = $spjTotal - $spjFilled;
+        $spjPercentage = $spjTotal > 0 ? round(($spjFilled / $spjTotal) * 100, 1) : 0;
+
+        // Breakdown per jenis pencairan
+        $spjPerJenis = [];
+        foreach ($jenisPencairanList as $jp) {
+            $jpQuery = \App\Models\BkuTransaksi::whereYear('tanggal', $selectedYear)
+                ->where('jenis_pencairan', $jp);
+            if (auth()->user()->role === 'pptk') {
+                $jpQuery->where('pptk_id', auth()->user()->pejabat_id);
+            }
+            $jpTotal = (clone $jpQuery)->count();
+            $jpFilled = (clone $jpQuery)->whereNotNull('link_drive')->where('link_drive', '!=', '')->count();
+            $spjPerJenis[] = [
+                'label' => $jp,
+                'total' => $jpTotal,
+                'filled' => $jpFilled,
+                'percentage' => $jpTotal > 0 ? round(($jpFilled / $jpTotal) * 100, 1) : 0,
+            ];
+        }
+
+        return view('bku.index', compact(
+            'transaksis', 'pptks', 'subKegiatans', 'selectedJenisPencairan',
+            'selectedYear', 'sortColumn', 'sortDirection', 'jenisPencairanList',
+            'spjTotal', 'spjFilled', 'spjEmpty', 'spjPercentage', 'spjPerJenis'
+        ));
     }
 
     public function store(Request $request)

@@ -80,6 +80,162 @@
 
         <hr class="border-gray-200 mb-6">
 
+        <!-- SPJ Fisik Completion Statistics -->
+        <div x-data="{ spjOpen: false }" class="mb-6">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300"
+                 :class="spjOpen ? 'ring-2 ring-bedas-200' : ''">
+                <!-- Header - Always visible, clickable to expand -->
+                <button @click="spjOpen = !spjOpen" type="button"
+                    class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors duration-200 focus:outline-none">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center
+                            {{ $spjPercentage >= 80 ? 'bg-emerald-100' : ($spjPercentage >= 50 ? 'bg-amber-100' : 'bg-red-100') }}">
+                            <svg class="w-5 h-5 {{ $spjPercentage >= 80 ? 'text-emerald-600' : ($spjPercentage >= 50 ? 'text-amber-600' : 'text-red-600') }}"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="text-sm font-bold text-gray-800">Keterisian SPJ Fisik</h3>
+                            <p class="text-xs text-gray-500">{{ $spjFilled }} dari {{ $spjTotal }} transaksi memiliki link SPJ fisik</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <!-- Compact progress bar -->
+                        <div class="hidden sm:flex items-center gap-2.5">
+                            <div class="w-32 h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full transition-all duration-700 ease-out
+                                    {{ $spjPercentage >= 80 ? 'bg-gradient-to-r from-emerald-400 to-emerald-500' : ($spjPercentage >= 50 ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-red-400 to-red-500') }}"
+                                    style="width: {{ $spjPercentage }}%"></div>
+                            </div>
+                            <span class="text-sm font-bold {{ $spjPercentage >= 80 ? 'text-emerald-600' : ($spjPercentage >= 50 ? 'text-amber-600' : 'text-red-600') }}">
+                                {{ $spjPercentage }}%
+                            </span>
+                        </div>
+                        <!-- Toggle icon -->
+                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-300" :class="spjOpen ? 'rotate-180' : ''"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </button>
+
+                <!-- Expandable Content -->
+                <div x-show="spjOpen" x-cloak
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 transform translate-y-0"
+                    x-transition:leave-end="opacity-0 transform -translate-y-2">
+                    <div class="px-5 pb-5 border-t border-gray-100">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-4">
+                            <!-- Donut Chart -->
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="relative w-40 h-40">
+                                    <svg class="w-40 h-40 transform -rotate-90" viewBox="0 0 120 120">
+                                        <!-- Background circle -->
+                                        <circle cx="60" cy="60" r="52" fill="none" stroke="#e5e7eb" stroke-width="12"/>
+                                        <!-- Filled portion -->
+                                        <circle cx="60" cy="60" r="52" fill="none"
+                                            stroke="{{ $spjPercentage >= 80 ? '#10b981' : ($spjPercentage >= 50 ? '#f59e0b' : '#ef4444') }}"
+                                            stroke-width="12"
+                                            stroke-linecap="round"
+                                            stroke-dasharray="{{ 2 * 3.14159 * 52 }}"
+                                            stroke-dashoffset="{{ 2 * 3.14159 * 52 * (1 - $spjPercentage / 100) }}"
+                                            class="transition-all duration-1000 ease-out"/>
+                                        <!-- Empty portion indicator -->
+                                        @if($spjEmpty > 0 && $spjPercentage < 100)
+                                        <circle cx="60" cy="60" r="52" fill="none"
+                                            stroke="#fecaca"
+                                            stroke-width="12"
+                                            stroke-dasharray="{{ 2 * 3.14159 * 52 }}"
+                                            stroke-dashoffset="{{ 2 * 3.14159 * 52 * ($spjPercentage / 100) }}"
+                                            style="transform: rotate({{ $spjPercentage * 3.6 }}deg); transform-origin: center;"
+                                            class="transition-all duration-1000 ease-out opacity-50"/>
+                                        @endif
+                                    </svg>
+                                    <!-- Center text -->
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span class="text-2xl font-black {{ $spjPercentage >= 80 ? 'text-emerald-600' : ($spjPercentage >= 50 ? 'text-amber-600' : 'text-red-600') }}">
+                                            {{ $spjPercentage }}%
+                                        </span>
+                                        <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Terisi</span>
+                                    </div>
+                                </div>
+                                <!-- Legend -->
+                                <div class="flex items-center gap-4 mt-3">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2.5 h-2.5 rounded-full {{ $spjPercentage >= 80 ? 'bg-emerald-500' : ($spjPercentage >= 50 ? 'bg-amber-500' : 'bg-red-500') }}"></span>
+                                        <span class="text-xs text-gray-600">Terisi ({{ $spjFilled }})</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-gray-300"></span>
+                                        <span class="text-xs text-gray-600">Belum ({{ $spjEmpty }})</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Summary Stats -->
+                            <div class="flex flex-col justify-center gap-3">
+                                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-xs text-blue-500 font-semibold uppercase tracking-wider">Total Transaksi</p>
+                                            <p class="text-2xl font-black text-blue-700 mt-0.5">{{ number_format($spjTotal) }}</p>
+                                        </div>
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-3 border border-emerald-100">
+                                        <p class="text-[10px] text-emerald-500 font-semibold uppercase tracking-wider">SPJ Terisi</p>
+                                        <p class="text-xl font-black text-emerald-700 mt-0.5">{{ number_format($spjFilled) }}</p>
+                                    </div>
+                                    <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-3 border border-red-100">
+                                        <p class="text-[10px] text-red-500 font-semibold uppercase tracking-wider">Belum Terisi</p>
+                                        <p class="text-xl font-black text-red-600 mt-0.5">{{ number_format($spjEmpty) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Per Jenis Pencairan Breakdown -->
+                            <div class="flex flex-col justify-center">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Per Jenis Pencairan</h4>
+                                <div class="space-y-2.5 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+                                    @foreach($spjPerJenis as $spj)
+                                        <div class="group">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <span class="text-xs font-semibold text-gray-700">{{ $spj['label'] }}</span>
+                                                <span class="text-[10px] font-bold
+                                                    {{ $spj['percentage'] >= 80 ? 'text-emerald-600' : ($spj['percentage'] >= 50 ? 'text-amber-600' : 'text-red-600') }}">
+                                                    {{ $spj['filled'] }}/{{ $spj['total'] }}
+                                                    <span class="text-gray-400 font-normal">({{ $spj['percentage'] }}%)</span>
+                                                </span>
+                                            </div>
+                                            <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                                                <div class="h-full rounded-full transition-all duration-500 ease-out
+                                                    {{ $spj['percentage'] >= 80 ? 'bg-gradient-to-r from-emerald-400 to-emerald-500' : ($spj['percentage'] >= 50 ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-red-400 to-red-500') }}"
+                                                    style="width: {{ $spj['percentage'] }}%"></div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                    @if(count($spjPerJenis) === 0)
+                                        <p class="text-xs text-gray-400 italic">Belum ada data transaksi.</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Error/Success Alert -->
         @if (session('error'))
             <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">

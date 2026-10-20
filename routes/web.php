@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\PejabatController;
 use App\Http\Controllers\AnggaranController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DebugController;
 
 Route::get('/test-zip', function () {
@@ -57,6 +58,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('anggaran/delete-all', [AnggaranController::class, 'deleteAll'])->name('anggaran.deleteAll');
     Route::patch('anggaran/{anggaran}/update-pagu', [AnggaranController::class, 'updatePaguInline'])->name('anggaran.updatePagu');
     Route::resource('anggaran', AnggaranController::class);
+
+    // Laporan Routes
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/cetak', [LaporanController::class, 'cetak'])->name('laporan.cetak');
 
     // User Management
     Route::resource('users', \App\Http\Controllers\UserController::class)->except(['create', 'show', 'edit']);

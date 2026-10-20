@@ -15,17 +15,33 @@ class LaporanController extends Controller
     {
         $tahun = session('tahun_anggaran', date('Y'));
 
-        // Get all leaf-level kode rekening (yang punya transaksi)
+        // Get all leaf-level kode rekening belanja (yang punya transaksi)
         $kodeRekeningList = BkuTransaksi::whereYear('tanggal', $tahun)
             ->select('kode_rekening')
             ->distinct()
             ->orderBy('kode_rekening')
             ->pluck('kode_rekening');
 
-        // Get all anggaran for the kamus
-        $kamusRekening = Anggaran::where('tahun', $tahun)
+        // Get kamus kode rekening belanja (kode 5.x) dari data anggaran
+        // dan juga dari transaksi BKU yang mungkin belum ada di tabel anggaran
+        $kamusFromAnggaran = Anggaran::where('tahun', $tahun)
+            ->where('kode', 'like', '5.%')
             ->orderBy('kode')
             ->get(['id', 'kode', 'uraian', 'pagu', 'parent_id']);
+
+        // Tambahkan kode rekening dari BKU yang belum ada di anggaran
+        $existingKodes = $kamusFromAnggaran->pluck('kode')->toArray();
+        $extraKamus = $kodeRekeningList
+            ->filter(fn($kode) => !in_array($kode, $existingKodes))
+            ->map(fn($kode) => (object)[
+                'id' => 'bku_' . $kode,
+                'kode' => $kode,
+                'uraian' => BkuTransaksi::where('kode_rekening', $kode)->value('uraian') ?? '-',
+                'pagu' => 0,
+                'parent_id' => null,
+            ]);
+
+        $kamusRekening = $kamusFromAnggaran->concat($extraKamus)->sortBy('kode')->values();
 
         // Filter parameters
         $selectedKode = $request->input('kode_rekening', '');

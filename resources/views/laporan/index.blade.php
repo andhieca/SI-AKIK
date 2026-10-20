@@ -187,8 +187,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-white">Kamus Kode Rekening</h3>
-                            <p class="text-bedas-200 text-sm">Pilih kode rekening untuk laporan</p>
+                            <h3 class="text-lg font-bold text-white">Kamus Kode Rekening Belanja</h3>
+                            <p class="text-bedas-200 text-sm">Pilih kode rekening belanja untuk laporan</p>
                         </div>
                     </div>
                     <button @click="showKamus = false" class="text-white hover:text-bedas-200 transition">
@@ -201,7 +201,7 @@
                 {{-- Search in Kamus --}}
                 <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                     <div class="relative">
-                        <input type="text" x-model="searchKamus" @input="filterKamus()" placeholder="Cari kode atau uraian rekening..."
+                        <input type="text" x-model="searchKamus" @input="filterKamus()" placeholder="Cari kode atau uraian rekening belanja..."
                             class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 focus:border-bedas-500 focus:ring focus:ring-bedas-200 focus:ring-opacity-50 transition duration-200">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

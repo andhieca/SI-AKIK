@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Anggaran;
 use App\Models\BkuTransaksi;
+use App\Helpers\KamusRekening;
 
 class LaporanController extends Controller
 {
@@ -15,33 +16,22 @@ class LaporanController extends Controller
     {
         $tahun = session('tahun_anggaran', date('Y'));
 
-        // Get all leaf-level kode rekening belanja (yang punya transaksi)
-        $kodeRekeningList = BkuTransaksi::whereYear('tanggal', $tahun)
+        // Kamus resmi kode rekening belanja dari standar
+        $kamusRekening = KamusRekening::all();
+
+        // Get all distinct kode rekening belanja yang ada di transaksi BKU untuk autocomplete
+        $bkuKodes = BkuTransaksi::whereYear('tanggal', $tahun)
+            ->whereNotNull('kode_rekening')
             ->select('kode_rekening')
             ->distinct()
             ->orderBy('kode_rekening')
             ->pluck('kode_rekening');
 
-        // Get kamus kode rekening belanja (kode 5.x) dari data anggaran
-        // dan juga dari transaksi BKU yang mungkin belum ada di tabel anggaran
-        $kamusFromAnggaran = Anggaran::where('tahun', $tahun)
-            ->where('kode', 'like', '5.%')
-            ->orderBy('kode')
-            ->get(['id', 'kode', 'uraian', 'pagu', 'parent_id']);
-
-        // Tambahkan kode rekening dari BKU yang belum ada di anggaran
-        $existingKodes = $kamusFromAnggaran->pluck('kode')->toArray();
-        $extraKamus = $kodeRekeningList
-            ->filter(fn($kode) => !in_array($kode, $existingKodes))
-            ->map(fn($kode) => (object)[
-                'id' => 'bku_' . $kode,
-                'kode' => $kode,
-                'uraian' => BkuTransaksi::where('kode_rekening', $kode)->value('uraian') ?? '-',
-                'pagu' => 0,
-                'parent_id' => null,
-            ]);
-
-        $kamusRekening = $kamusFromAnggaran->concat($extraKamus)->sortBy('kode')->values();
+        // Gabungkan list kode rekening untuk datalist autocomplete (kamus + BKU)
+        $kodeRekeningList = $kamusRekening->pluck('kode')
+            ->concat($bkuKodes)
+            ->unique()
+            ->values();
 
         // Filter parameters
         $selectedKode = $request->input('kode_rekening', '');
@@ -59,8 +49,28 @@ class LaporanController extends Controller
         if ($selectedKode) {
             $hasFilter = true;
 
-            $transaksiQuery = BkuTransaksi::where('kode_rekening', $selectedKode)
-                ->whereYear('tanggal', $tahun);
+            $transaksiQuery = BkuTransaksi::whereYear('tanggal', $tahun);
+
+            // Coba exact match dulu
+            $countExact = (clone $transaksiQuery)->where('kode_rekening', $selectedKode)->count();
+            if ($countExact > 0) {
+                $transaksiQuery->where('kode_rekening', $selectedKode);
+            } else {
+                // Jika tidak ada exact match, coba cocokkan normalized kode (toleran zero-padding)
+                $normSelected = KamusRekening::normalize($selectedKode);
+                $matchingBkuKodes = BkuTransaksi::whereYear('tanggal', $tahun)
+                    ->whereNotNull('kode_rekening')
+                    ->distinct()
+                    ->pluck('kode_rekening')
+                    ->filter(fn($k) => KamusRekening::normalize($k) === $normSelected)
+                    ->values();
+
+                if ($matchingBkuKodes->isNotEmpty()) {
+                    $transaksiQuery->whereIn('kode_rekening', $matchingBkuKodes);
+                } else {
+                    $transaksiQuery->where('kode_rekening', $selectedKode);
+                }
+            }
 
             if ($periodeAwal) {
                 $transaksiQuery->whereDate('tanggal', '>=', $periodeAwal);
@@ -73,14 +83,22 @@ class LaporanController extends Controller
             $transaksis = $transaksiQuery->orderBy('tanggal', 'asc')->get();
             $totalRealisasi = $transaksis->sum('nominal');
 
-            // Get pagu from anggaran
+            // Ambil Uraian Standar dari Kamus Kode Rekening Belanja
+            $uraianRekening = KamusRekening::getUraian($selectedKode);
+            if ($uraianRekening === '-') {
+                $anggaran = Anggaran::where('kode', $selectedKode)->where('tahun', $tahun)->first();
+                if ($anggaran) {
+                    $uraianRekening = $anggaran->uraian;
+                }
+            }
+
+            // Get pagu from anggaran if exists
             $anggaran = Anggaran::where('kode', $selectedKode)
                 ->where('tahun', $tahun)
                 ->first();
 
             if ($anggaran) {
                 $paguAnggaran = $anggaran->pagu;
-                $uraianRekening = $anggaran->uraian;
             }
         }
 
@@ -113,8 +131,28 @@ class LaporanController extends Controller
             return redirect()->route('laporan.index')->with('error', 'Pilih kode rekening terlebih dahulu.');
         }
 
-        $transaksiQuery = BkuTransaksi::where('kode_rekening', $selectedKode)
-            ->whereYear('tanggal', $tahun);
+        $transaksiQuery = BkuTransaksi::whereYear('tanggal', $tahun);
+
+        // Coba exact match dulu
+        $countExact = (clone $transaksiQuery)->where('kode_rekening', $selectedKode)->count();
+        if ($countExact > 0) {
+            $transaksiQuery->where('kode_rekening', $selectedKode);
+        } else {
+            // Normalized matching toleran zero padding
+            $normSelected = KamusRekening::normalize($selectedKode);
+            $matchingBkuKodes = BkuTransaksi::whereYear('tanggal', $tahun)
+                ->whereNotNull('kode_rekening')
+                ->distinct()
+                ->pluck('kode_rekening')
+                ->filter(fn($k) => KamusRekening::normalize($k) === $normSelected)
+                ->values();
+
+            if ($matchingBkuKodes->isNotEmpty()) {
+                $transaksiQuery->whereIn('kode_rekening', $matchingBkuKodes);
+            } else {
+                $transaksiQuery->where('kode_rekening', $selectedKode);
+            }
+        }
 
         if ($periodeAwal) {
             $transaksiQuery->whereDate('tanggal', '>=', $periodeAwal);
@@ -131,12 +169,18 @@ class LaporanController extends Controller
                 + ($t->ppn ?? 0) + ($t->pajak_daerah ?? 0) + ($t->pph4_final ?? 0);
         });
 
+        // Ambil Uraian Standar dari Kamus Kode Rekening Belanja
+        $uraianRekening = KamusRekening::getUraian($selectedKode);
+        if ($uraianRekening === '-') {
+            $anggaran = Anggaran::where('kode', $selectedKode)->where('tahun', $tahun)->first();
+            $uraianRekening = $anggaran ? $anggaran->uraian : '-';
+        }
+
         $anggaran = Anggaran::where('kode', $selectedKode)
             ->where('tahun', $tahun)
             ->first();
 
         $paguAnggaran = $anggaran ? $anggaran->pagu : 0;
-        $uraianRekening = $anggaran ? $anggaran->uraian : '-';
         $sisaAnggaran = $paguAnggaran - $totalRealisasi;
 
         // Get pejabat for signature
@@ -160,3 +204,4 @@ class LaporanController extends Controller
         ));
     }
 }
+

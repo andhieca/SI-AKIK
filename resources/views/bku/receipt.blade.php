@@ -97,32 +97,36 @@
             border: 1px solid #000;
             text-align: center;
             vertical-align: top;
-            padding: 5px;
+            padding: 6px 5px;
             width: 25%;
-            height: 100px;
+            height: 145px;
+            min-height: 145px;
             position: relative;
             font-size: 9pt;
         }
 
         .signature-title {
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             font-weight: bold;
             font-size: 9pt;
+            line-height: 1.3;
         }
 
         .signature-name {
             font-weight: bold;
             text-decoration: underline;
             position: absolute;
-            bottom: 20px;
-            left: 0;
-            right: 0;
+            bottom: 22px;
+            left: 2px;
+            right: 2px;
+            line-height: 1.2;
+            font-size: 9pt;
         }
 
         .signature-nip {
-            font-size: 10pt;
+            font-size: 9pt;
             position: absolute;
-            bottom: 5px;
+            bottom: 6px;
             left: 0;
             right: 0;
         }
